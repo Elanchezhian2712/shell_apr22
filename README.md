@@ -3,7 +3,9 @@
       git clone https://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@github.com/Elanchezhian2712/shell_apr22.git
 
 
-
+#Run Cmd
+      Frontend : python3 -m http.server 8000 --bind 0.0.0.0
+      Backend : bash run.sh
 
 # Query
 
