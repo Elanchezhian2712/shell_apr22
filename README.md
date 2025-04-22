@@ -2,11 +2,31 @@
 
       git clone https://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@github.com/Elanchezhian2712/shell_apr22.git
 
+------------------------
 
-#Run Cmd
+# Run Cmd
       Frontend : python3 -m http.server 8000 --bind 0.0.0.0
       Backend : bash run.sh
 
+---------------------
+      
+# File Formate csv(Tracker File):
+      Store Number
+      4 - Digit Store Number	
+      Store Name
+      Department Name
+      Planogram Type
+      Planogram Name	
+      No. of SKUs	Priroity
+      Delivery_date
+      
+# Planogram PDF Formate Name:
+      Planogram Name.zip
+
+# Source File Name:
+      4 digit Store number.zip
+
+---------------------------------
 # Query
 
     
