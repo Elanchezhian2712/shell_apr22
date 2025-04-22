@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
+
+
+    <!-- <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script> -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+
+    <style>
+        .container {
+            display: flex;
+        }
+
+        .container p {
+            margin-right: 20px;
+            /* Adjust as needed for spacing between elements */
+            font-size: 150px;
+        }
+
+        #pdf-viewer {
+            width: 50%;
+            height: 100px;
+            /* overflow: hidden; */
+            border: 1px solid #ccc;
+            position: relative;
+            display: inline-block;
+        }
+
+        .annotation-marker1 {
+            position: absolute;
+            width: 30px;
+            height: 70px;
+            border-bottom: 12px solid green;
+            /* Bottom line for the tick */
+            border-right: 12px solid green;
+            /* Right slanted line for the tick */
+            transform: rotate(45deg);
+            /* Rotate to create the tick shape */
+            cursor: pointer;
+        }
+
+        .annotation-marker2 {
+            position: absolute;
+            background-color: blue;
+            width: 100px;
+            height: 15px;
+            /* Adjust as needed */
+            transform: rotate(45deg);
+            /* Rotate to create a tick mark */
+            cursor: pointer;
+            padding-right: 7px;
+        }
+
+        .annotation-marker2::after {
+            content: "";
+            position: absolute;
+            width: 100px;
+            height: 15px;
+            background-color: blue;
+            transform: rotate(-90deg);
+            padding-right: 7px;
+        }
+
+        .annotation-marker3 {
+            position: absolute;
+            background-color: red;
+            width: 100px;
+            height: 15px;
+            /* Adjust as needed */
+            transform: rotate(45deg);
+            /* Rotate to create a tick mark */
+            cursor: pointer;
+            padding-right: 7px;
+        }
+
+        .annotation-marker3::after {
+            content: "";
+            position: absolute;
+            width: 100px;
+            height: 15px;
+            background-color: red;
+            transform: rotate(-90deg);
+            padding-right: 7px;
+        }
+
+        .annotation-marker4 {
+            position: absolute;
+            background-color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .buttondiv {
+            margin-left: 40px;
+            margin-top: 50px;
+        }
+
+        .image-wrapper {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .image-wrapper img {
+            width: 400px;
+            height: 400px;
+        }
+
+        body {
+            overflow: auto !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="modal" id="myModal"></div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="buttondiv">
+                <button
+                    style="background-color:green;color:white;width: 250px;height: 100px;font-size: 50px; border-radius: 28px;"
+                    onclick="fun(1)" id="green">Green - G</button> &nbsp&nbsp
+                <button
+                    style="background-color:blue;color:white;;width: 250px;height: 100px;font-size: 50px; border-radius: 28px;"
+                    onclick="fun(2)" id="blue">Blue - B</button>&nbsp&nbsp
+                <button
+                    style="background-color:red;color:white;;width: 250px;height: 100px;font-size: 50px; border-radius: 28px;"
+                    onclick="fun(3)" id="red">Red - R</button>
+
+                <!-- Button trigger modal -->
+                <button type="button" id="asd786" class="btn btn-primary" data-toggle="modal"
+                    data-target="#exampleModal" style="display: none;" onclick="upcdata()">
+                    UPC
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document" style="background-color: blueviolet;">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background-color: burlywood;">
+                                <p class="modal-title" id="exampleModalLabel" style="font-size: 60px;">Search UPC
+                                <p>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true" style="font-size: 80px;">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <label for="upcInput">Enter UPC Code</label>
+                                <input type="text" class="form-control" id="upcInput"
+                                    style="height: 150px; font-size: 100px;" onkeyup="searchUPC()">
+                                <br>
+                                <div id="searchResult"></div>
+                                <table id="productTable" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>UPC</th>
+                                            <th>Product Name</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                    style="height: 150px ;width: 250px; font-size: 80px;">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    $(function () {
+                        var isDragging = false;
+                        var initialMouseX, initialMouseY, initialModalX, initialModalY;
+                        var modal = $(".modal-dialog");
+
+                        $(".modal-header").on("mousedown", function (e) {
+                            isDragging = true;
+                            initialMouseX = e.clientX;
+                            initialMouseY = e.clientY;
+
+                            initialModalX = modal.offset().left;
+                            initialModalY = modal.offset().top;
+
+                            $(document).on("mousemove", onMouseMove);
+                            $(document).on("mouseup", onMouseUp);
+
+                            e.preventDefault();
+                        });
+
+                        function onMouseMove(e) {
+                            if (isDragging) {
+                                var currentMouseX = e.clientX;
+                                var currentMouseY = e.clientY;
+                                var newX = initialModalX + (currentMouseX - initialMouseX);
+                                var newY = initialModalY + (currentMouseY - initialMouseY);
+
+                                modal.css({
+                                    left: newX + 'px',
+                                    top: newY + 'px',
+                                    transform: 'none' 
+                                });
+                            }
+                        }
+
+                        function onMouseUp() {
+                            if (isDragging) {
+                                $(document).off("mousemove", onMouseMove);
+                                $(document).off("mouseup", onMouseUp);
+                                isDragging = false;
+                            }
+                        }
+                    });
+                </script>
+                <script>
+                    document.addEventListener('keydown', function (event) {
+                        if (event.key === 'g' || event.key === 'G') {
+                            document.getElementById("green").click();
+                        }
+                    });
+                    document.addEventListener('keydown', function (event) {
+                        if (event.key === 'b' || event.key === 'B') {
+                            document.getElementById("blue").click();
+                        }
+                    });
+                    document.addEventListener('keydown', function (event) {
+                        if (event.key === 'r' || event.key === 'R') {
+                            document.getElementById("red").click();
+                        }
+                    });
+                    selectedItems = [];
+                    const upcInput = document.getElementById('upcInput');
+                    const searchResult = document.getElementById('searchResult');
+
+                    function searchUPC() {
+                        const enteredUPC = upcInput.value.toUpperCase();
+
+                        const matchingItems = upcData.filter(item => new RegExp(enteredUPC, "i").test(item["Product Name"]));
+
+                        // if (enteredUPC.length > 0) {
+                        //     if (matchingItems.length > 0) {
+                        //         let resultsHTML = '<div class="row">';
+                        //         matchingItems.forEach(item => {
+                        //             resultsHTML += `
+                        //             <div class="col-md-12">
+                        //                 ${item.UPC} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        //                  ${item["Product Name"]}    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                             
+                        //                 <button class="btn btn-primary add-button" data-item='${JSON.stringify(item)}' style="font-size: 64px;">Add</button>
+                        //                 <hr>
+                        //             </div>
+                        //         `;
+                        //         });
+                        //         resultsHTML += '</div>';
+                        //         searchResult.innerHTML = resultsHTML;
+                        //         const addButtons = document.querySelectorAll('.add-button');
+                        //         addButtons.forEach(button => {
+                        //             button.addEventListener('click', function () {
+                        //                 searchResult.innerHTML = '';
+                        //                 $('#upcInput').val('')
+                        //             });
+                        //         });
+                        //     }
+                        //     else {
+                        //         searchResult.innerHTML = 'No matching UPC codes found.';
+                        //     }
+
+                        //     const addButtons = document.querySelectorAll('.add-button');
+                        //     addButtons.forEach(button => {
+                        //         button.addEventListener('click', function () {
+                        //             const selectedItem = JSON.parse(this.dataset.item);
+                        //             selectedItems.length = 0;
+                        //             selectedItems.push(selectedItem);
+                        //             console.log("Selected Items:", selectedItems);
+                        //             reloadTable();
+                        //         });
+                        //     });
+                        // } else {
+                        //     searchResult.innerHTML = 'No matching UPC codes found.';
+                        // }
+                        if (enteredUPC.length > 0) {
+                            if (matchingItems.length > 0) {
+                                let resultsHTML = '<div class="row">';
+                                matchingItems.forEach(item => {
+                                    resultsHTML += `
+                                    <div id="highlightDiv" class="col-md-12 add-button" data-item='${JSON.stringify(item)}'>
+                                        ${item.UPC} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                         ${item["Product Name"]}    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                             
+                                        
+                                        <hr>
+                                    </div>
+                                `;
+                                });
+                                // <button class="btn btn-primary add-button" data-item='${JSON.stringify(item)}' style="font-size: 64px;">Add</button>
+                                resultsHTML += '</div>';
+                                searchResult.innerHTML = resultsHTML;
+                                const addButtons = document.querySelectorAll('.add-button');
+                                addButtons.forEach(button => {
+                                    button.addEventListener('click', function () {
+                                        searchResult.innerHTML = '';
+                                        $('#upcInput').val('')
+                                    });
+                                });
+                            }
+                            else {
+                                searchResult.innerHTML = 'No matching UPC codes found.';
+                            }
+
+                            const addButtons = document.querySelectorAll('.add-button');
+                            addButtons.forEach(button => {
+                                button.addEventListener('click', function () {
+                                    const selectedItem = JSON.parse(this.dataset.item);
+                                    selectedItems.length = 0;
+                                    selectedItems.push(selectedItem);
+                                    console.log("Selected Items:", selectedItems);
+                                    reloadTable();
+                                });
+                            });
+                        } else {
+                            searchResult.innerHTML = 'No matching UPC codes found.';
+                        }
+                        function generateTable(items) {
+                            const tableBody = document.getElementById('tableBody');
+                            items.forEach((item, index) => {
+                                const row = document.createElement('tr');
+                                Object.values(item).forEach(value => {
+                                    const cell = document.createElement('td');
+                                    cell.textContent = value;
+                                    row.appendChild(cell);
+                                });
+                                // const deleteCell = document.createElement('td');
+                                // const deleteBtn = document.createElement('button');
+                                // deleteBtn.textContent = 'Delete';
+                                // deleteBtn.classList.add('btn', 'btn-danger');
+                                // deleteBtn.style.fontSize = '70px';
+                                // deleteBtn.addEventListener('click', () => removeItem(index));
+                                // deleteCell.appendChild(deleteBtn);
+                                // row.appendChild(deleteCell);
+
+                                // tableBody.appendChild(row);
+                                const deleteCell = document.createElement('td');
+                                const deleteIcon = document.createElement('img');
+                                deleteIcon.src = '../../images/delete.png';
+                                deleteIcon.style.borderRadius = '0';
+                                deleteIcon.style.width = '80px';
+                                deleteIcon.style.height = '80px';
+                                deleteIcon.style.cursor = 'pointer';
+                                deleteIcon.addEventListener('click', () => removeItem(index));
+                                deleteCell.appendChild(deleteIcon);
+                                row.appendChild(deleteCell);
+
+                                tableBody.appendChild(row);
+
+                            });
+                        }
+
+                        function removeItem(index) {
+                            console.log(selectedItems)
+                            selectedItems.splice(index, 1);
+                            console.log(selectedItems);
+                            const tableBody = document.getElementById('tableBody');
+                            tableBody.innerHTML = '';
+                            generateTable(selectedItems);
+                        }
+
+                        function reloadTable() {
+
+                            var dataArray = [];
+
+                            $('#productTable tbody tr').each(function () {
+                                var rowData = {};
+                                rowData['UPC'] = $(this).find('td:eq(0)').text().trim();
+                                rowData['Product Name'] = $(this).find('td:eq(1)').text().trim();
+                                dataArray.push(rowData);
+                            });
+
+                            const tableBody = document.getElementById('tableBody');
+                            tableBody.innerHTML = '';
+                            dataArray.forEach(function (item) {
+                                var newItem = {
+                                    'UPC': item['UPC'],
+                                    'Product Name': item['Product Name']
+                                };
+                                selectedItems.push(newItem);
+                            });
+
+                            generateTable(selectedItems);
+                        }
+
+
+
+                    }
+                </script>
+
+                <style>
+                    body.modal-open {
+                        overflow: hidden;
+                    }
+                </style>
+                <style>
+                    body.modal-open {
+                        overflow: hidden;
+                    }
+
+                    .modal-dialog {
+                        width: 2500px;
+                        max-width: 4000px !important;
+                        min-height: 1000px !important;
+                        margin: 1.75rem auto;
+                        position: absolute;
+                    }
+
+                    .modal-body {
+                        font-size: 50px;
+                        max-height: none;
+                        height: 1000px;
+                        overflow-y: auto;
+                        padding-top: 50px !important;
+                        padding-bottom: 50px !important;
+                        padding-left: 50px !important;
+                        padding-right: 50px !important;
+                    }
+
+                    .modal-header {
+                        cursor: move;
+                    }
+
+                    #highlightDiv {
+                        cursor: pointer;
+                    }
+
+                    #highlightDiv:hover {
+                        background-color: yellow;
+                        color: blue;
+                    }
+                </style>
+                <script src="../../js/url.js"></script>
+
+
+
+            </div>
+        </div>
+        <div class="col-md-5 mt-4">
+            <div id="image-container" class="mt-4"></div>
+        </div>
+        <div class="col-md-1 mt-5">
+            <button class="btn btn-primary" style="font-size: 60px; border-radius: 40px;"
+                id="submit_colors_tick_count">Submit</button>
+        </div>
+    </div>
+
+    <p id="val" style="visibility: hidden;"></p>
+    <br><br>
+    <div class="container">
+        <p style="color:green; ">Green:</p>
+        <p id="green_count">0</p>
+        <p style="color:blue;">Blue:</p>
+        <p id="blue_count">0</p>
+        <p style="color:red;">Red:</p>
+        <p id="red_count">0</p>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="pdf-viewer" style="height: 100px;width: 100px;"></div>
+
+            <div id="pdfContainer" style="height: 100px;width: 100px;"></div>
+
+
+            <script>
+
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                const qValue = urlParams.get('q');
+
+                let newurl = qValue;
+                let modifiedUrl = newurl.replace('upload_pdf', 'pdf');
+                const urlmax = new URL(modifiedUrl);
+                var axisPoints = [];
+                var count = 1;
+                var one = "";
+                var two = "";
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+                const url = urlmax;
+                const pdfContainer = document.getElementById('pdf-viewer');
+                let canvas
+                pdfjsLib.getDocument(url).promise.then(pdfDoc => {
+                    for (let pageNum = 1; pageNum < pdfDoc.numPages; pageNum++) {
+                        canvas = document.createElement('canvas');
+                        canvas.id = 'myCanvas' + pageNum.toString();
+                        renderPage(pageNum, pdfDoc, canvas);
+                    }
+                    mark_annotate(canvas)
+                });
+
+                function renderPage(num, pdfDoc, canvas) {
+                    pdfDoc.getPage(num).then(page => {
+                        let scale = 1;
+                        let resolution = 5;
+                        let viewport = page.getViewport({ scale });
+                        let context = canvas.getContext('2d');
+
+                        canvas.height = resolution * viewport.height;
+                        canvas.width = resolution * viewport.width;
+                        canvas.style.height = viewport.height;
+                        canvas.style.width = viewport.width;
+
+                        let renderContext = {
+                            canvasContext: context,
+                            viewport: viewport,
+                            transform: [resolution, 0, 0, resolution, 0, 0]
+                        };
+
+                        page.render(renderContext).promise.then(() => {
+                            canvas.addEventListener('click', function (e) {
+                                handleCanvasClick(e, canvas, num);
+                            });
+                        });
+
+                        pdfContainer.appendChild(canvas);
+                    });
+                }
+
+
+                // function handleCanvasClick(event, canvas, pageNum) {
+                //     let rect = canvas.getBoundingClientRect();
+                //     let x = (event.clientX * 4) - rect.left;
+                //     let y = (event.clientY * 4) - rect.top;
+                //     let marker = document.createElement('div');
+                //     marker.className = document.getElementById('val').innerHTML;
+
+                //     if (document.getElementById('val').innerHTML === "annotation-marker3" || document.getElementById('val').innerHTML === "annotation-marker2") {
+                //         x -= 50;
+                //         y -= 26;
+                //     } else {
+                //         x -= 16;
+                //         y -= 30;
+                //     }
+
+                //     marker.style.left = `${x}px`;
+                //     marker.style.top = `${y}px`;
+                //     pdfContainer.appendChild(marker);
+                //     one = `${x}`;
+                //     two = `${y}`;
+                //     var htmlWidth = document.documentElement.clientWidth;
+                //     var htmlHeight = document.documentElement.clientHeight;
+                //     if (document.getElementById('val').innerHTML === "annotation-marker1") {
+                //         document.getElementById('green_count').innerText++;
+                //     } else if (document.getElementById('val').innerHTML === "annotation-marker2") {
+                //         document.getElementById('blue_count').innerText++;
+                //     } else if (document.getElementById('val').innerHTML === "annotation-marker3") {
+
+                //         document.getElementById('asd786').click();
+                //         document.getElementById('red_count').innerText++;
+                //     }
+
+                //     axisPoints.push({ x: (one), y: (two), ht_width: canvas.width, ht_height: canvas.height, label: document.getElementById('val').innerHTML });
+                //     console.log(axisPoints);
+                //     marker.id = count;
+                //     marker.onclick = function () {
+                //         let element = document.getElementById(marker.id);
+                //         if (element) {
+                //             let classList = element.classList;
+                //             if (classList == 'annotation-marker1') {
+                //                 var a = document.getElementById('green_count').innerHTML;
+                //                 var temp = parseInt(a);
+                //                 var temp2 = --temp;
+                //                 document.getElementById('green_count').innerHTML = temp2;
+                //             } else if (classList == 'annotation-marker2') {
+                //                 var a = document.getElementById('blue_count').innerHTML;
+                //                 var temp = parseInt(a);
+                //                 var temp2 = --temp;
+                //                 document.getElementById('blue_count').innerHTML = temp2;
+                //             } else if (classList == 'annotation-marker3') {
+                //                 var a = document.getElementById('red_count').innerHTML;
+                //                 var temp = parseInt(a);
+                //                 var temp2 = --temp;
+                //                 document.getElementById('red_count').innerHTML = temp2;
+                //             }
+                //             axisPoints.pop(count);
+                //         }
+
+                //         element2 = document.getElementById(marker.id);
+                //         element2.parentNode.removeChild(element);
+                //     };
+
+                //     count++;
+                // }
+
+                function handleCanvasClick(event, canvas, pageNum) {  // Receive pageNum from the event listener
+                    let rect = canvas.getBoundingClientRect();
+
+                    // Calculate scale between canvas actual size and CSS size
+                    let scaleX = canvas.width / rect.width;
+                    let scaleY = canvas.height / rect.height;
+
+                    // Get correct click position based on scale
+                    let x = (event.clientX - rect.left) * scaleX;
+                    let y = (event.clientY - rect.top) * scaleY;
+
+                    console.log(`Mouse clicked on page ${pageNum} at scaled position: x=${x}, y=${y}`);
+
+                    let marker = document.createElement('div');
+                    marker.className = document.getElementById('val').innerHTML;
+
+                    // Adjust marker placement
+                    if (marker.className === "annotation-marker3" || marker.className === "annotation-marker2") {
+                        x -= 50;
+                        y -= 26;
+                    } else {
+                        x -= 16;
+                        y -= 30;
+                    }
+
+                    console.log(`Adjusted annotation marker placed at: x=${x}, y=${y}`);
+
+
+                    marker.style.left = `${x}px`;
+                    marker.style.top = `${y}px`;
+
+                    // Append marker to the specific canvas
+                    canvas.parentNode.appendChild(marker); // This is the critical change!  Append to parent of the canvas
+
+                    one = `${x}`;
+                    two = `${y}`;
+                    var htmlWidth = document.documentElement.clientWidth;
+                    var htmlHeight = document.documentElement.clientHeight;
+                    // Update counts based on marker type
+                    if (document.getElementById('val').innerHTML === "annotation-marker1") {
+                        document.getElementById('green_count').innerText++;
+                    } else if (document.getElementById('val').innerHTML === "annotation-marker2") {
+
+                        // document.getElementById('asd786').click();
+                        document.getElementById('blue_count').innerText++;
+                    } else if (document.getElementById('val').innerHTML === "annotation-marker3") {
+
+                        document.getElementById('asd786').click();
+
+                        document.getElementById('red_count').innerText++;
+                    }
+
+                    // Store marker position and type, include the page number
+                    axisPoints.push({ x: (one), y: (two), ht_width: canvas.width, ht_height: canvas.height, label: document.getElementById('val').innerHTML, aid: count.toString(), page: pageNum });
+                    console.log(axisPoints);
+
+
+
+                    marker.id = count;
+                    marker.onclick = function () {
+
+
+                        filteredarray = axisPoints.filter(obj => obj.aid !== marker.id);
+
+                        axisPoints.length = 0;
+
+                        axisPoints = filteredarray;
+
+                        console.log(axisPoints);
+
+                        let element = document.getElementById(marker.id);
+                        if (element) {
+
+                            let classList = element.classList;
+
+                            if (classList == 'annotation-marker1') {
+
+                                var a = document.getElementById('green_count').innerHTML;
+                                var temp = parseInt(a);
+                                var temp2 = --temp;
+                                document.getElementById('green_count').innerHTML = temp2;
+
+                            } else if (classList == 'annotation-marker2') {
+
+                                var a = document.getElementById('blue_count').innerHTML;
+                                var temp = parseInt(a);
+                                var temp2 = --temp;
+                                document.getElementById('blue_count').innerHTML = temp2;
+
+                            } else if (classList == 'annotation-marker3') {
+                                var a = document.getElementById('red_count').innerHTML;
+                                var temp = parseInt(a);
+                                var temp2 = --temp;
+                                document.getElementById('red_count').innerHTML = temp2;
+                            }
+                        }
+                        element2 = document.getElementById(marker.id);
+                        element2.parentNode.removeChild(element);
+                    };
+
+                    count++;
+                }
+
+                
+                function selectAnnotationMarker(markerType) {
+                    document.getElementById('val').innerText = markerType;
+                }
+
+                function fun(a) {
+                    if (a == "1") {
+                        document.getElementById('val').innerHTML = 'annotation-marker1';
+                    } else if (a == "2") {
+                        document.getElementById('val').innerHTML = 'annotation-marker2';
+                        if (document.getElementById('val').innerHTML === 'annotation-marker2') {
+
+                        }
+                    } else if (a == "3") {
+                        document.getElementById('val').innerHTML = 'annotation-marker3';
+                    }
+                }
+                $(document).ready(function () {
+                    $('#submit_colors_tick_count').click(function () {
+                        var greenCount = parseInt($('#green_count').text());
+                        var blueCount = parseInt($('#blue_count').text());
+                        var redCount = parseInt($('#red_count').text());
+
+                        var tableData = [];
+                        $('#productTable tbody tr').each(function () {
+                            var rowData = {};
+                            rowData['UPC'] = $(this).find('td:eq(1)').text();
+                            rowData['Product Name'] = $(this).find('td:eq(2)').text();
+                            rowData['Distributor'] = ""; 
+                            tableData.push(rowData);
+                        });
+                        if ((redCount) !== tableData.length) {
+                            alert("Value doesn't match. Please review your counts.");
+                            return; 
+                        }
+                        const url = window.location.href;
+                        const queryString = url.split('?')[1];
+                        const params = queryString.split('&');
+
+                        let pdfUrl = '';
+                        params.forEach(param => {
+                            if (param.includes('upload_pdf')) {
+                                pdfUrl = param.split('=')[1];
+                            }
+                        });
+                        const decodedPdfUrl = decodeURIComponent(pdfUrl);
+                        const desiredPath = decodedPdfUrl.replace(/^https?:\/\/[^\/]+\/?/, '');
+
+                        console.log(desiredPath);
+                        console.log(tableData);
+                        const queryString1 = window.location.search;
+                        const urlParams = new URLSearchParams(queryString1);
+
+                        var formData = new FormData();
+                        formData.append('input_path', desiredPath);
+                        formData.append('axis_points', JSON.stringify(axisPoints));
+                        formData.append('production_id', urlParams.get('production_id'));
+                        formData.append('eight_digit_store_number', urlParams.get('eight_digit_store_number'));
+                        console.log(urlParams.get('eight_digit_store_number'))
+                        var urls = baseurl + '/get_axis_audit';
+                        $.ajax({
+                            url: urls,
+                            type: 'POST',
+                            processData: false,
+                            contentType: false,
+                            data: formData,
+                            success: function (response) {
+                                var tableData = [];
+                                $('#productTable tbody tr').each(function () {
+                                    var rowData = {};
+                                    rowData.product_upc = $(this).find('td:nth-child(1)').text().trim();
+                                    rowData.product_name = $(this).find('td:nth-child(2)').text().trim();
+                                    rowData.product_distrubtor = "";
+                                    tableData.push(rowData);
+                                });
+                                console.log(tableData)
+
+                                var formData = new FormData();
+                                formData.append('production_id', urlParams.get('production_id'));
+                                formData.append('upc_json', JSON.stringify(tableData));
+                                var urls = baseurl + '/add_audit_upc'
+                                $.ajax({
+                                    url: urls,
+                                    type: 'POST',
+                                    processData: false,
+                                    contentType: false,
+                                    data: formData,
+                                    success: function (response) {
+                                        console.log(response);
+                                        upcData = response;
+                                        var formData = new FormData();
+                                        formData.append('green_count', greenCount);
+                                        formData.append('blue_count', blueCount);
+                                        formData.append('red_count', redCount);
+                                        formData.append('production_id', urlParams.get('production_id'));
+                                        var urls = baseurl + '/add_audit_count';
+                                        $.ajax({
+                                            url: urls,
+                                            type: 'POST',
+                                            processData: false,
+                                            contentType: false,
+                                            data: formData,
+                                            success: function (response) {
+                                                console.log(response);
+                                                upcData = response;
+                                                var prokey = urlParams.get('production_id');
+                                                var currentURL = window.location.href;
+
+                                                var hostname = new URL(currentURL).hostname;
+                                                console.log(hostname)
+                                                var newTab = window.open('http://' + hostname + ':8000/pages/page/audit_page.html?greenCount=' + greenCount + '&blueCount=' + blueCount + '&redCount=' + redCount + '&desiredPath=' + desiredPath + '&production_id=' + prokey + '&tableData=' + JSON.stringify(tableData) + '&status=audit', '_blank');
+
+                                                newTab.onload = function () {
+                                                    window.close();
+                                                };
+                                            },
+                                            error: function (xhr, status, error) {
+                                                console.error('Error:', error);
+                                            }
+                                        });
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.error('Error:', error);
+                                    }
+                                });
+
+
+                            },
+                            error: function (xhr, status, error) {
+                                console.error('Error:', error);
+                            }
+                        });
+
+                    });
+                });
+
+                function mark_annotate(canvas) {
+                    const queryString = window.location.search;
+                    const urlParams = new URLSearchParams(queryString);
+
+                    const production_id = urlParams.get('production_id');
+                    var formData = new FormData();
+                    formData.append('production_id', production_id);
+                    var urls = baseurl + '/get_axis_points_for_audit'
+                    $.ajax({
+                        url: urls,
+                        type: 'POST',
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        success: function (response) {
+                            var array = response;
+                            array.map(item => {
+                                console.log(item);
+                                axisPoints.push(item);
+                            })
+
+                            //console.log(response);
+
+                            var jsonString = JSON.stringify({
+                                "vertices": array.map(item => ({
+                                    "x": parseFloat(item.x),
+                                    "y": parseFloat(item.y),
+                                    "z": item.label
+                                }))
+                            });
+
+                            console.log(jsonString);
+
+
+                            try {
+                                var jsonObject = JSON.parse(jsonString);
+                                var i = 0;
+                                for (i = 0; i < jsonObject.vertices.length; i++) {
+                                    console.log(jsonObject.vertices[i].x);
+                                    console.log(jsonObject.vertices[i].y);
+
+                                    let rect = canvas.getBoundingClientRect();
+                                    let x = parseInt(jsonObject.vertices[i].x);
+                                    let y = parseInt(jsonObject.vertices[i].y);
+
+                                    let marker = document.createElement('div');
+
+                                    marker.className = jsonObject.vertices[i].z;
+
+                                    if (jsonObject.vertices[i].z == "annotation-marker1") {
+                                        var a = document.getElementById('green_count').innerHTML;
+                                        var temp = parseInt(a);
+                                        var temp2 = ++temp;
+                                        document.getElementById('green_count').innerHTML = temp2;
+                                    }
+
+                                    if (jsonObject.vertices[i].z == "annotation-marker2") {
+                                        var a = document.getElementById('blue_count').innerHTML;
+                                        var temp = parseInt(a);
+                                        var temp2 = ++temp;
+                                        document.getElementById('blue_count').innerHTML = temp2;
+                                    }
+
+                                    if (jsonObject.vertices[i].z == "annotation-marker3") {
+                                        var a = document.getElementById('red_count').innerHTML;
+                                        var temp = parseInt(a);
+                                        var temp2 = ++temp;
+                                        document.getElementById('red_count').innerHTML = temp2;
+                                    }
+
+
+                                    marker.id = count;
+                                    marker.onclick = function () {
+
+                                        let element = document.getElementById(marker.id);
+                                        if (element) {
+
+                                            let classList = element.classList;
+
+                                            if (classList == 'annotation-marker1') {
+
+                                                var a = document.getElementById('green_count').innerHTML;
+                                                var temp = parseInt(a);
+                                                var temp2 = --temp;
+                                                document.getElementById('green_count').innerHTML = temp2;
+
+                                            } else if (classList == 'annotation-marker2') {
+
+                                                var a = document.getElementById('blue_count').innerHTML;
+                                                var temp = parseInt(a);
+                                                var temp2 = --temp;
+                                                document.getElementById('blue_count').innerHTML = temp2;
+
+                                            } else if (classList == 'annotation-marker3') {
+                                                var a = document.getElementById('red_count').innerHTML;
+                                                var temp = parseInt(a);
+                                                var temp2 = --temp;
+                                                document.getElementById('red_count').innerHTML = temp2;
+                                            }
+                                        }
+
+                                        element2 = document.getElementById(marker.id);
+                                        element2.parentNode.removeChild(element);
+                                    };
+
+
+                                    marker.style.left = `${x}px`;
+                                    marker.style.top = `${y}px`;
+                                    pdfContainer.appendChild(marker);
+                                    count++;
+                                }
+                            } catch (error) {
+                                console.error('Invalid JSON:', error);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error:', error);
+                        }
+                    });
+
+                    $(document).on('click', '.delete-button', function () {
+                        var index = $(this).data('index');
+                        $(this).closest('tr').remove();
+                    });
+                }
+
+
+            </script>
+            <script src="../../js/url.js"></script>
+            <script>
+                upcData = [];
+                function upcdata() {
+
+                    const url = window.location.href;
+                    const queryString = url.split('?')[1];
+                    const params = queryString.split('&');
+                    let pdfUrl = '';
+                    params.forEach(param => {
+                        if (param.includes('upload_pdf')) {
+                            pdfUrl = param.split('=')[1];
+                        }
+                    });
+                    const decodedPdfUrl = decodeURIComponent(pdfUrl);
+                    const desiredPath = decodedPdfUrl.replace(/^https?:\/\/[^\/]+\/?/, '');
+                    var formData = new FormData();
+                    formData.append('pdf_path', desiredPath);
+                    var urls = baseurl + '/get_upc_text'
+                    $.ajax({
+                        url: urls,
+                        type: 'POST',
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        success: function (response) {
+                            console.log(response);
+                            upcData = response;
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error:', error);
+                        }
+                    });
+                }
+            </script>
+
+            <div class="col-md-5 mt-4">
+                <div id="image-container" class="mt-4"></div>
+            </div>
+
+            <script>
+                const urlParamss = new URLSearchParams(window.location.search);
+                const ImageValue = urlParamss.get('image');
+                const imageContainer = document.getElementById('image-container');
+
+                if (ImageValue && ImageValue != "") {
+                    const imagePaths = ImageValue.split(',');
+                    if (imagePaths.length > 0) {
+                        imagePaths.forEach(path => {
+                            const img = document.createElement('img');
+                            var temp = baseurl + "/" + path.trim();
+                            temp = temp.replace("upload_image", "image");
+                            img.src = temp;
+
+                            img.onclick = function () {
+                                window.open(temp, '_blank');
+                            };
+
+                            const wrapper = document.createElement('div');
+                            wrapper.classList.add('image-wrapper');
+                            wrapper.appendChild(img);
+                            imageContainer.appendChild(wrapper);
+                        });
+                    } else {
+                        const noImageMessage = document.createElement('p');
+                        noImageMessage.textContent = "No image found";
+                        imageContainer.appendChild(noImageMessage);
+                    }
+                } else {
+                    const noImageMessage = document.createElement('p');
+                    noImageMessage.textContent = "No image found";
+                    imageContainer.appendChild(noImageMessage);
+                    console.log('No image paths found in query parameters.');
+                }
+            </script>
+
+        </div>
+        <div class="col-md-6">
+
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+
+            var formData = new FormData();
+            formData.append('production_id', urlParams.get('production_id'));
+            var urls = baseurl + '/get_productioned_upc'
+            $.ajax({
+                url: urls,
+                type: 'POST',
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (response) {
+                    var tableBody = $('#tableBody'); 
+                    tableBody.empty();
+                    response.forEach(function (row, index) {
+                        var newRow = $('<tr>');
+                        newRow.append('<td>' + row['production_upc'] + '</td>'); 
+                        newRow.append('<td>' + row['production_name'] + '</td>'); 
+                        newRow.append('<td><button class="btn btn-danger delete-button" style= "font-size:70px" data-index="' + index + '">Delete</button></td>');
+                        tableBody.append(newRow); 
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+
+            $(document).on('click', '.delete-button', function () {
+                var index = $(this).data('index');
+                $(this).closest('tr').remove();
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+
+        });
+    </script>
+    <script>
+        document.body.style.zoom = "25%";
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#exampleModal').on('show.bs.modal', function () {
+                $('body').css('overflow', 'hidden');
+            });
+
+            $('#exampleModal').on('hidden.bs.modal', function () {
+                $('body').css('overflow', 'auto'); 
+            });
+        });
+    </script>
+</body>
+
+</html>

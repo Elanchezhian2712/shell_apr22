@@ -1,0 +1,65 @@
+<div class="col-sm-12 col-md-4">
+    <label for="trackerfile">Tracker File</label>
+    <input type="file" class="form-control" accept=".csv" name="trackerfile"
+        id="trackerfile">
+</div>
+
+<script>
+    function trackerdatas() {
+
+        var trackerFile = $('#trackerfile').val();
+        var planogramPDF = $('#planogram_pdf').val();
+        var planogramImage = $('#planogram_image').val();
+
+        if (trackerFile) {
+            sendFile($('#trackerfile')[0].files[0], '/tracking_sheet_upload');
+        }
+        if (planogramPDF) {
+            sendFile($('#planogram_pdf')[0].files[0], '/planogram_upload');
+        }
+        if (planogramImage) {
+            sendFile($('#planogram_image')[0].files[0], '/tracking_sheet_upload');
+        }
+    }
+
+    function sendFile(file, url) {
+        var projectid = $('#projectname').val();
+        var cycleid = $('#cyclename').val();
+        console.log(projectid + cycleid)
+        var urls = baseurl + url
+        if (file) {
+            var formData = new FormData();
+            formData.append('project_id', projectid);
+
+            formData.append('cycle_id', cycleid);
+            formData.append('uploaded_by', parseInt(1));
+            formData.append('file', file);
+
+            $.ajax({
+                url: urls,
+                type: 'POST',
+                processData: false,
+                contentType: false,
+                data: formData,
+                xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener('progress', function(evt) {
+                    if (evt.lengthComputable) {
+                        var percentComplete = evt.loaded / evt.total * 100;
+                        $('.progress-bar').css('width', percentComplete + '%');
+                        $('.progress-bar').text(percentComplete.toFixed(0) + '%');
+                    }
+                }, false);
+                return xhr;
+            },
+                success: function (response) {
+                    console.log('Success:', response);
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+    }
+</script>

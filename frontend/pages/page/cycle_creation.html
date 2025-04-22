@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MNW</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="../../vendors/feather/feather.css">
+    <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../vendors/select2/select2.min.css">
+    <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- endinject -->
+    <link rel="shortcut icon" href="../../images/logo/m-favicon.png" />
+    <script>
+        $(document).ready(function () {
+            // Get role_name and menu_names from sessionStorage
+            var role_name = sessionStorage.getItem('role_name');
+            console.log(role_name, "role_name");
+            var menu_names = sessionStorage.getItem('menu_names');
+            console.log(menu_names, "bharathsssssssssss");
+
+            // Parse menu_names (assuming it is a comma-separated string)
+            var menuNamesArray = menu_names ? menu_names.split('%2C') : [];  // Assuming "%2C" was used for commas
+            console.log(menuNamesArray, "Parsed Menu Names");
+
+            // Hide all nav-items initially
+            $('.nav-item').hide();
+            $('.sub-menu .nav-item').hide();  // Hide all sub-menu items
+
+            // Show nav-items based on menu_names
+            menuNamesArray.forEach(function (menuName) {
+                menuName = decodeURIComponent(menuName.trim());  // Decode and trim menu name
+                console.log(menuName, "Decoded Menu Name");
+
+                // Show the corresponding menu item and its sub-menu items
+                var parentItem = $('#' + menuName.toLowerCase());
+                parentItem.show();
+                parentItem.find('.sub-menu .nav-item').show();
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            var userid = sessionStorage.getItem('id');
+            console.log(userid)
+            if (userid) {
+                console.log(userid)
+            }
+            else {
+
+                var currentURL = window.location.href;
+
+                var hostname = new URL(currentURL).hostname;
+                console.log(hostname)
+                window.location.href = 'http://' + hostname + ':8000/';
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <!-- <div id="navbarPlaceholder"></div> -->
+        <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+            <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+                <a class="navbar-brand brand-logo mr-5" href="../../index.html"><img
+                        src="../../images/logo/mpulse_logo.png" class="mr-2" alt="logo" /></a>
+                <a class="navbar-brand brand-logo-mini" href="../../index.html"><img
+                        src="../../images/logo/m-favicon.png" alt="logo" /></a>
+            </div>
+            <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                    <span class="icon-menu"></span>
+                </button>
+                <ul class="navbar-nav mr-lg-2">
+                    <li class="nav-item nav-search d-none d-lg-block">
+                        <div class="input-group">
+                            <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
+                                <span class="input-group-text" id="search">
+                                    <i class="icon-search"></i>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now"
+                                aria-label="search" aria-describedby="search">
+                        </div>
+                    </li>
+                </ul>
+                <ul class="navbar-nav navbar-nav-right">
+                    <li class="nav-item dropdown">
+                        <!-- <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
+                            data-toggle="dropdown">
+                            <i class="icon-bell mx-0"></i>
+                            <span class="count"></span>
+                        </a> -->
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                            aria-labelledby="notificationDropdown">
+                            <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
+                            <a class="dropdown-item preview-item">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-success">
+                                        <i class="ti-info-alt mx-0"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-content">
+                                    <h6 class="preview-subject font-weight-normal">Application Error</h6>
+                                    <p class="font-weight-light small-text mb-0 text-muted">
+                                        Just now
+                                    </p>
+                                </div>
+                            </a>
+                            <a class="dropdown-item preview-item">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-warning">
+                                        <i class="ti-settings mx-0"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-content">
+                                    <h6 class="preview-subject font-weight-normal">Settings</h6>
+                                    <p class="font-weight-light small-text mb-0 text-muted">
+                                        Private message
+                                    </p>
+                                </div>
+                            </a>
+                            <a class="dropdown-item preview-item">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-info">
+                                        <i class="ti-user mx-0"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-content">
+                                    <h6 class="preview-subject font-weight-normal">New user registration</h6>
+                                    <p class="font-weight-light small-text mb-0 text-muted">
+                                        2 days ago
+                                    </p>
+                                </div>
+                            </a>
+                        </div>
+                    </li>
+                    <li class="nav-item nav-profile dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+                            <img src="../../images/logo/m-favicon.png" alt="profile" />
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown"
+                            aria-labelledby="profileDropdown">
+                            <a class="dropdown-item">
+                                <i class="ti-settings text-primary"></i>
+                                Settings
+                            </a>
+                            <a class="dropdown-item" href="../../index.html" id="logout-link">
+                                <i class="ti-power-off text-primary"></i>
+                                Logout
+                            </a>
+                            <script>
+                                $(document).ready(function () {
+                                    $('#logout-link').on('click', function (event) {
+                                        event.preventDefault();
+                                        sessionStorage.clear();
+                                        window.location.href = $(this).attr('href');
+                                    });
+                                });
+                            </script>
+                        </div>
+                    </li>
+                    <!-- <li class="nav-item nav-settings d-none d-lg-flex">
+                        <a class="nav-link" href="#">
+                            <i class="icon-ellipsis"></i>
+                        </a>
+                    </li> -->
+                </ul>
+                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+                    data-toggle="offcanvas">
+                    <span class="icon-menu"></span>
+                </button>
+            </div>
+        </nav>
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_settings-panel.html -->
+            <!-- <div id="topbar"></div> -->
+            <!-- partial -->
+            <!-- <div id="menubar"></div> -->
+            <nav class="sidebar sidebar-offcanvas" id="sidebar">
+                <ul class="nav">
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="../../index.html">
+                            <i class="icon-grid menu-icon"></i>
+                            <span class="menu-title">Dashboard</span>
+                        </a>
+                    </li> -->
+                    <li class="nav-item" id="dashboard">
+                        <a class="nav-link" data-toggle="collapse" href="#dashboard" aria-expanded="false"
+                            aria-controls="dashboard">
+                            <i class="bi bi-cloud-arrow-up-fill menu-icon" style="font-size:large;"></i>
+                            <span class="menu-title">Dashboard</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="dashboard">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="dashboard.html">Dashboard</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="configrations">
+                        <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false"
+                            aria-controls="ui-basic">
+                            <i class="bi bi-collection menu-icon" style="font-size:large;"></i>
+                            <span class="menu-title">Configurations</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="ui-basic">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="role.html">Role</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="demography.html">Demography</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="datasource.html">Data Source</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="anotatemarker.html">Annotate Marker</a>
+                                </li>
+                                <li class="nav-item"> <a class="nav-link" href="menupermission.html">Menu Permission</a>
+                                </li>
+                                <li class="nav-item"> <a class="nav-link" href="user_credential_addpage.html">User</a>
+                                </li>
+                                <li class="nav-item"> <a class="nav-link" href="project_creation.html">Project
+                                        Creation</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="cycle_creation.html">Cycle Creation</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="upload">
+                        <a class="nav-link" data-toggle="collapse" href="#upload" aria-expanded="false"
+                            aria-controls="upload">
+                            <i class="bi bi-cloud-arrow-up-fill menu-icon" style="font-size:large;"></i>
+                            <span class="menu-title">Upload</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="upload">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="upload_page.html">Upload</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="production">
+                        <a class="nav-link" data-toggle="collapse" href="#production" aria-expanded="false"
+                            aria-controls="production">
+                            <i class="bi bi-person-workspace menu-icon" style="font-size:large;"></i>
+                            <span class="menu-title">Production</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="production">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="production_page.html">Production</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="audit">
+                        <a class="nav-link" data-toggle="collapse" href="#audit" aria-expanded="false"
+                            aria-controls="audit">
+                            <i class="icon-layout menu-icon"></i>
+                            <span class="menu-title">Audit</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="audit">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="audit_page.html">Audit</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="re_allocation">
+                        <a class="nav-link" data-toggle="collapse" href="#re_allocation" aria-expanded="false"
+                            aria-controls="re_allocation">
+                            <i class="bi bi-arrow-left-right menu-icon"></i>
+                            <span class="menu-title">Re Allocation</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="re_allocation">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="re_assign_and_allocation.html">Re
+                                        Allocation</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="specialization">
+                        <a class="nav-link" data-toggle="collapse" href="#specialization" aria-expanded="false"
+                            aria-controls="specialization">
+                            <i class="bi bi-boxes menu-icon"></i>
+                            <span class="menu-title">Specialization</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="specialization">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link"
+                                        href="catogory_selectionpage.html">Specialization</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="reports">
+                        <a class="nav-link" data-toggle="collapse" href="#reports" aria-expanded="false"
+                            aria-controls="reports">
+                            <i class="icon-layout menu-icon"></i>
+                            <span class="menu-title">Reports</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="reports">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="production_report.html">Production</a>
+                                </li>
+                                <li class="nav-item"> <a class="nav-link" href="audit_report.html">Audit</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="missing_upc_report.html">Missinng
+                                        UPC</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="hourly_report.html">Hourly</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="storewise_hourly_report.html">Storewise Hourly</a></li>
+
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="duplicate">
+                        <a class="nav-link" data-toggle="collapse" href="#duplicate" aria-expanded="false"
+                            aria-controls="duplicate">
+                            <i class="bi bi-copy menu-icon"></i>
+                            <span class="menu-title">Duplicate</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="duplicate">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="duplicate_finder.html">Duplicate
+                                        Finder</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="duplicate.html">Duplicate</a></li> 
+                                <li class="nav-item"> <a class="nav-link" href="duplicate_in_table.html">Duplicate
+                                        Table</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="active_deactive">
+                        <a class="nav-link" data-toggle="collapse" href="#active_deactive" aria-expanded="false"
+                            aria-controls="active_deactive">
+                            <i class="ibi bi-recycle menu-icon"></i>
+                            <span class="menu-title">Active Deactive</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="active_deactive">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="active_deactive.html">Active Deactive
+                                        </a></li>
+                                
+                            </ul>
+                        </div>
+                    </li>
+                    
+                </ul>
+
+            </nav>
+
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div class="col-sm-12 col-md-4">
+                                    <br>
+                                    <h3 class="text-primary">Cycle Creation</h3>
+                                    <hr>
+                                    <br>
+                                    <label for="">Project Name</label>
+                                    <select name="projectname" class="form-control" id="projectname">
+                                        <option value="">--Select Project--</option>
+                                    </select>
+                                    <br>
+                                    <label for="">Cycle Name</label>
+                                    <input type="text" class="form-control" name="cyclename" id="cyclename">
+                                    <br>
+                                    <label for="">Start Date</label>
+                                    <input type="date" class="form-control" name="startdate" id="startdate">
+                                    <br>
+                                    <label for="">End Date</label>
+                                    <input type="date" class="form-control" name="enddate" id="enddate">
+                                    <div class="row">
+                                        <div class="col-md-9"></div>
+                                        <div class="col-md-1">
+                                            <br>
+                                            <button style="text-align: right;" class="btn btn-success btn-sm"
+                                                onclick="insert_cycle_data()">Submit</button>
+                                            <br>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-8">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h3 class="text-primary">Search Cycle Details</h3>
+                                            <hr>
+                                            <br>
+                                            <div class="row">
+                                                <div class="col-md-3">
+
+                                                    <label for="">Project Name</label>
+                                                    <select name="table_projectname" id="table_projectname"
+                                                        class="form-control">
+                                                        <option value="">--Select--</option>
+                                                    </select>
+                                                </div>
+                                                <!-- <div class="col-md-4">
+                                                    <label for="">Cycle Name</label>
+                                                    <select name="table_cyclename" id="table_cyclename" class="form-control">
+                                                    <option value="">--Select--</option>    
+                                                    </select>
+                                                </div> -->
+                                                <div class="col-md-3">
+
+                                                    <button class="btn btn-primary mt-4" id="gettablevalue">Get</button>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="table-responsive">
+                                                <script src="../../vendors/js/vendor.bundle.base.js"></script>
+
+                                                <table class="table table-bordered"
+                                                    style="table-layout: auto; width: 100%; text-align: center;"
+                                                    id="my_table1">
+                                                    <thead class="text-center">
+                                                        <tr class="text-center">
+                                                            <th>S.no</th>
+                                                            <th>Project Name</th>
+                                                            <th>Cycle Name</th>
+                                                            <th>Cycle start date</th>
+                                                            <th>Cycle End date</th>
+                                                            <th class="text-info">Edit </th>
+                                                            <th class="text-danger">Delete</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="newtable">
+
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                            <style>
+                                                #my_table1 th {
+                                                    font-size: 18px;
+                                                    text-align: center;
+                                                    /* Adjust the font size as needed */
+                                                }
+                                            </style>
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Cycle</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <label for="">Enter New cycle name</label>
+                                        <input type="hidden" name="updatecycleid" id="updatecycleid">
+                                        <input type="text" class="form-control" name="updatecyclename"
+                                            id="updatecyclename">
+                                        <br>
+                                        <label for="">Start Date</label>
+                                        <input type="date" class="form-control" name="updatestartdate"
+                                            id="updatestartdate">
+                                        <br>
+                                        <label for="">End Date</label>
+                                        <input type="date" class="form-control" name="updateenddate" id="updateenddate">
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" onclick="updatedata()">Save
+                                            changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <br>
+
+                </div>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <style>
+        /* Style select elements with name="example" */
+        select[name="my_table1_length"] {
+            height: 30px;
+        }
+
+        .paginate_button {
+            font-size: 12px;
+        }
+    </style>
+    <!-- container-scroller -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+    <script src="../../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+    <script src="../../vendors/datatables.net/jquery.dataTables.js"></script>
+    <script src="../../js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="../../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+    <script src="../../js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <script src="../../vendors/js/vendor.bundle.base.js"></script>
+    <script src="../../vendors/select2/select2.min.js"></script>
+    <script src="../../js/off-canvas.js"></script> -->
+    <script src="../../js/hoverable-collapse.js"></script>
+    <script src="../../js/template.js"></script>
+    <script src="../../js/settings.js"></script>
+    <script src="../../js/todolist.js"></script>
+    <script src="../../js/select2.js"></script>
+
+
+</body>
+<script src="../../js/url.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var url = baseurl + '/get_project';
+        $.ajax({
+            url: url,
+            type: 'GET',
+            contentType: 'application/json',
+
+            success: function (response) {
+                console.log('Request successful');
+                console.log('Response:', response);
+                $.each(response, function (index, item) {
+                    var select = ""; // Initialize select variable
+                    select += '<option value="' + item.project_id + '">' + item.project_name + '</option>'; // Access item properties correctly
+                    $('#projectname').append(select);
+                    $('#table_projectname').append(select);
+
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#gettablevalue').click(function () {
+            var projectId = $('#table_projectname').val();
+            populateCycleData(projectId);
+        });
+    });
+
+    function populateCycleData(projectId) {
+        var formData = new FormData();
+        formData.append('project_id', projectId); // Append projectId to FormData
+
+        var url = baseurl + '/get_cycle'; // Update the URL to fetch cycle data for the selected project
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                console.log(response);
+                // Clear existing table rows
+                var table = $('#my_table1').DataTable();
+                table.clear().draw();
+
+                if (response.length === 0) {
+                    $('#newtable').html('<tr><td colspan="7" class="text-center">No records found</td></tr>');
+                } else {
+                    $.each(response, function (index, item) {
+                        var row = [
+                            (index + 1),
+                            item.project_name,
+                            item.cycle_name,
+                            item.cycle_start_date,
+                            item.cycle_end_date,
+                            '<img src="../../images/edit.png" class="open-modal" style="border-radius: 0; width: 20px; height: 20px;" data-toggle="modal" onclick=\'data("update",' + item["cycle_id"] + ',"' + item['cycle_name'] + '","' + item['cycle_start_date'] + '","' + item['cycle_end_date'] + '")\' data-target="#exampleModal">',
+                            '<img src="../../images/delete.png" style="border-radius: 0; width: 20px; height: 20px;" onclick=\'data("delete",' + item["cycle_id"] + ')\'></td>'
+                        ];
+                        table.row.add(row).draw(false);
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+</script>
+<script>
+    function insert_cycle_data() {
+        var projectname = $('#projectname').val();
+        var cyclename = $('#cyclename').val();
+        var startdate = $('#startdate').val();
+        var enddate = $('#enddate').val();
+        var url = baseurl + '/cycle_creation';
+
+        var dataToSend = {
+            project_id: projectname,
+            cycle_name: cyclename,
+            cycle_start_date: startdate,
+            cycle_end_date: enddate
+        };
+
+        // $.ajax({
+        //     url: url,
+        //     type: 'POST',
+        //     contentType: 'application/json',
+        //     data: JSON.stringify(dataToSend),
+        //     success: function (response) {
+        //         alert("Cycle Added Successfully")
+        //         location.reload();
+        //     },
+        //     error: function (xhr, status, error) {
+        //         console.error('Error:', error);
+        //     }
+        // });
+        $.ajax({
+            url: url,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(dataToSend),
+            success: function (response) {
+                if (response === "Cyclename Already Exists") {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response
+                    });
+                } else if (response === "Success") {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: "Cycle Created Successfully!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    };
+
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script>
+    function data(key, id, cyclename, cyclestart_date, cycleend_date) {
+        var id = parseInt(id);
+        if (key === "update") {
+            $('#updatecycleid').val(id);
+            $('#updatecyclename').val(cyclename);
+            var startDateParts = cyclestart_date.split('-');
+            var endDateParts = cycleend_date.split('-');
+            var formattedStartDate = startDateParts[2] + '-' + startDateParts[1] + '-' + startDateParts[0];
+            var formattedEndDate = endDateParts[2] + '-' + endDateParts[1] + '-' + endDateParts[0];
+
+            $('#updatestartdate').val(formattedStartDate);
+            $('#updateenddate').val(formattedEndDate);
+        } else if (key === "delete") {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You won\'t be able to revert this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var url = baseurl + '/delete_cycle';
+                    var formData = new FormData();
+                    formData.append('cycle_id', parseInt(id));
+                    // $.ajax({
+                    //     url: url,
+                    //     type: 'DELETE',
+                    //     processData: false,
+                    //     contentType: false,
+                    //     data: formData,
+                    //     success: function (response) {
+                    //         // Reload the page or update the table as needed
+                    //         location.reload();
+                    //     },
+                    //     error: function (xhr, status, error) {
+                    //         console.error('Error:', error);
+                    //     }
+                    // });
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        success: function (response) {
+                            location.reload();
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error:', error);
+                        }
+                    });
+                }
+            });
+        }
+    }
+</script>
+<script>
+    function updatedata() {
+        var id = $('#updatecycleid').val();
+        var cyclename = $('#updatecyclename').val();
+        var startdate = $('#updatestartdate').val();
+        var enddate = $('#updateenddate').val();
+
+        var url = baseurl + '/update_cycle';
+        var dataToSend = {
+            id: id,
+            cycle_name: cyclename,
+            cycle_start_date: startdate,
+            cycle_end_date: enddate
+        };
+
+        $.ajax({
+            url: url,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(dataToSend),
+            success: function (response) {
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+</script>
+
+</html>

@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MNW</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="../../vendors/feather/feather.css">
+    <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.css" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="../../vendors/select2/select2.min.css">
+    <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/vertical-layout-light/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="../../images/logo/m-favicon.png" />
+    <script src="../../vendors/js/vendor.bundle.base.js"></script>
+    <script src="../../vendors/select2/select2.min.js"></script>
+    <script src="../../js/off-canvas.js"></script>
+    <script src="../../js/hoverable-collapse.js"></script>
+    <script src="../../js/template.js"></script>
+    <script src="../../js/settings.js"></script>
+    <script src="../../js/todolist.js"></script>
+    <script src="../../js/select2.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Get role_name and menu_names from sessionStorage
+            var role_name = sessionStorage.getItem('role_name');
+            console.log(role_name, "role_name");
+            var menu_names = sessionStorage.getItem('menu_names');
+            console.log(menu_names, "bharathsssssssssss");
+
+            // Parse menu_names (assuming it is a comma-separated string)
+            var menuNamesArray = menu_names ? menu_names.split('%2C') : [];  // Assuming "%2C" was used for commas
+            console.log(menuNamesArray, "Parsed Menu Names");
+
+            // Hide all nav-items initially
+            $('.nav-item').hide();
+            $('.sub-menu .nav-item').hide();  // Hide all sub-menu items
+
+            // Show nav-items based on menu_names
+            menuNamesArray.forEach(function (menuName) {
+                menuName = decodeURIComponent(menuName.trim());  // Decode and trim menu name
+                console.log(menuName, "Decoded Menu Name");
+
+                // Show the corresponding menu item and its sub-menu items
+                var parentItem = $('#' + menuName.toLowerCase());
+                parentItem.show();
+                parentItem.find('.sub-menu .nav-item').show();
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            var userid = sessionStorage.getItem('id');
+            console.log(userid)
+            if (userid) {
+                console.log(userid)
+            }
+            else {
+
+                var currentURL = window.location.href;
+
+                var hostname = new URL(currentURL).hostname;
+                console.log(hostname)
+                window.location.href = 'http://' + hostname + ':8000/';
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            var dynamicpdf = "";
+            $(document).ready(function () {
+                $('#loaderModal').show();
+                var userid = sessionStorage.getItem('id');
+                console.log(userid + "userid");
+                var url = baseurl + '/get_audit_qa';
+                var formData = new FormData();
+                formData.append('emp_id', userid);
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+
+                    success: function (response) {
+                        $('#loaderModal').hide();
+                        if (response && response.length > 0) {
+                            var completed = response[0].completed;
+                            var total = response[0].total;
+                            $('#comtext').text(completed + '/' + total);
+                            var cycleName = response[0].cycle_name;
+                            console.log(cycleName)
+                            var skiped_count = response[0].skiped_count;
+                            var production_id = response[0].unique_id;
+
+                            var storenumber = response[0].store_number;
+                            var eight_digit_store_number = response[0].eight_digit_store_number;
+
+                            
+                            var department_name = response[0].department_name;
+                            var planogram_type = response[0].planogram_type;
+                            var planogram_name = response[0].planogram_name;
+                            var total_no_of_sku = response[0].total_no_of_sku;
+                            var pdfPath = response[0].pdf_path_name[0];
+
+                            var workable_status = response[0].workable_status;
+                            console.log(workable_status)
+
+
+                            var Image_Qualified_for_Compliance = response[0].Image_Qualified_for_Compliance;
+                            var No_of_Missing_SKUs = response[0].No_of_Missing_SKUs;
+                            var Incorrectly_placed_SKUs = response[0].Incorrectly_placed_SKUs;
+                            var Remarks = response[0].Remarks;
+                            var No_of_Bays = response[0].No_of_Bays;
+                            var No_of_Shelves = response[0].No_of_Shelves;
+                            var Size_of_Bays = response[0].Size_of_Bays;
+                            var green_count = response[0].green_count;
+                            var red_count = response[0].red_count;
+                            var blue_count = response[0].blue_count;
+
+
+
+                            var dynamicUrl = baseurl + '/' + pdfPath;
+                            var imagePaths = response[0].image_path_name;
+                            url = dynamicUrl;
+                            dynamicpdf = dynamicUrl;
+                            $('#unique_id').val(production_id);
+
+                            $('#cycle').val(cycleName);
+                            $('#storenumber').val(storenumber);
+                            $('#8digit_store_number').val(eight_digit_store_number);
+
+                            $('#departmentname').val(department_name);
+                            $('#departmenttype').val(planogram_type);
+                            $('#planogramname').val(planogram_name);
+                            $('#total_no_of_skus').val(total_no_of_sku);
+                            $('#Remarks').val(Remarks);
+
+                            $('#available_checking_text').text('');
+
+                            if (!pdfPath && (!imagePaths || imagePaths.length === 0)) {
+                                $('#available_checking_text').text('PDF and Image not available');
+                                $('#opentabaudit').hide();
+                            }
+
+                            else if (!pdfPath) {
+                                $('#available_checking_text').text('PDF not available');
+                                $('#opentabaudit').hide();
+
+                            }
+                            else if (!imagePaths || imagePaths.length === 0) {
+                                $('#available_checking_text').text('Image not available');
+                                $('#opentabaudit').hide();
+
+                            }
+
+                            // Assuming workable_status is directly related to workable_non_workable value
+                            var workable_non_workable = workable_status;
+
+                            $('#workable_non_workable').val(workable_non_workable);
+                            console.log(Image_Qualified_for_Compliance)
+
+                            $('#first-row').empty();
+                            if (workable_non_workable == "Non Workable - Store image/Segment image missing") {
+                                $('#first-row').empty();
+                                $('#second-row').empty();
+                                $('.prod_file').hide();
+                                $('#production_pdf').removeAttr('required');
+                            } else if (workable_non_workable == "Workable") {
+                                $('#first-row').append("<div class='col-md-4'>" +
+                                    "<label for='Image_Qualified_for_Compliance'>Image Qualified for Compliance</label><br>" +
+                                    "<select name='Image_Qualified_for_Compliance' id='Image_Qualified_for_Compliance' " +
+                                    "style='border: 1px solid black; color: black;' class='form-control select-form' required>" +
+                                    "<option value=''>-- Select --</option>" +
+                                    "<option value='Qualified'>Qualified</option>" +
+                                    "<option value='Not Qualified - Image is blur/pixelated'>Not Qualified - Image is blur/pixelated</option>" +
+                                    "<option value='Not Qualified - Image has glare'>Not Qualified - Image has glare</option>" +
+                                    "<option value='Not Qualified - Image cut on the sides'>" +
+                                    "Not Qualified - Image cut on the sides</option>" +
+                                    "<option value='Not Qualified - Image has an obstruction - Image has glare'>Not Qualified - Image has an obstruction - Image has glare</option>" +
+                                    "<option value='Not Qualified - Image is dark'>Not Qualified - Image is dark</option>" +
+                                    "</select>" +
+                                    "</div>" +
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>No. of Missing SKUs</label><br>" +
+                                    "<input type='text' class='form-control' name='no_of_missing_skus' id='no_of_missing_skus' disabled required>" +
+                                    "</div>" +
+                                    "<div class='col-md-4'>" +
+                                    "<label for=''>Incorrectly placed SKUs</label><br>" +
+                                    "<input type='text' class='form-control' name='incorrectly_placed_skus' " +
+                                    "id='incorrectly_placed_skus' disabled required>" +
+                                    "</div>");
+                                $('#Image_Qualified_for_Compliance').val(Image_Qualified_for_Compliance);
+                                $('#no_of_missing_skus').val(red_count);
+                                $('#incorrectly_placed_skus').val(blue_count);
+
+                                $('.prod_file').show();
+                                // Load values from URL when the select input changes
+                                // loadValuesFromURL();
+                            } else {
+                                $('#first-row').append('<div class="col-md-3">' +
+                                    '<label for="">Image Qualified for Compliance</label><br>' +
+                                    "<select name='Image_Qualified_for_Compliance' id='Image_Qualified_for_Compliance' " +
+                                    "style='border: 1px solid black; color: black;' class='form-control select-form' required>" +
+                                    "<option value=''>-- Select --</option>" +
+                                    "<option value='Qualified'>Qualified</option>" +
+                                    "<option value='Not Qualified - Image is blur/pixelated'>Not Qualified - Image is blur/pixelated</option>" +
+                                    "<option value='Not Qualified - Image has glare'>Not Qualified - Image has glare</option>" +
+                                    "<option value='Not Qualified - Image cut on the sides'>" +
+                                    "Not Qualified - Image cut on the sides</option>" +
+                                    "<option value='Not Qualified - Image has an obstruction - Image has glare'>Not Qualified - Image has an obstruction - Image has glare</option>" +
+                                    "<option value='Not Qualified - Image is dark'>Not Qualified - Image is dark</option>" +
+                                    "</select></div>" +
+                                    '<div class="col-md-3">' +
+                                    '<label for="">No. of Bays</label><br>' +
+                                    '<input type="text" class="form-control" name="No_of_Bays" id="No_of_Bays" required> ' +
+                                    '</div>' +
+                                    '<div class="col-md-3">' +
+                                    '<label for="">No. of Shelves</label><br>' +
+                                    '<input type="text" class="form-control" name="No_of_Shelves" id="No_of_Shelves" required> ' +
+                                    '</div>' +
+                                    '<div class="col-md-3">' +
+                                    '<label for="">Size of Bays</label><br>' +
+                                    '<input type="text" class="form-control" name="Size_of_Bays" id="Size_of_Bays" required>' +
+                                    '</div>');
+                                $('#Image_Qualified_for_Compliance').val(Image_Qualified_for_Compliance);
+                                $('#No_of_Bays').val(No_of_Bays);
+                                $('#No_of_Shelves').val(No_of_Shelves);
+                                $('#Size_of_Bays').val(Size_of_Bays);
+                                $('.prod_file').hide();
+                                $('#production_pdf').removeAttr('required');
+                                // Load values from URL when the select input changes
+                                // loadValuesFromURL();
+                            }
+                            const queryString = window.location.search;
+                            const urlParams = new URLSearchParams(queryString);
+                            const status = urlParams.get('status');
+                            console.log(status)
+                            if (status == "audit") {
+                                $('#opentabaudit').hide()
+                                $('#open_pdated_pdf').show()
+                                const queryString = window.location.search;
+                                const urlParams = new URLSearchParams(queryString);
+                                const tableDataString = urlParams.get('tableData');
+                                const tableData = JSON.parse(tableDataString);
+                                const greentick = urlParams.get('greenCount');
+                                const no_of_missing_skus = urlParams.get('blueCount');
+                                const incorrectly_placed_skus = urlParams.get('redCount');
+
+                                $('#greentick').text(greentick);
+                                $('#bluetick').text(no_of_missing_skus);
+
+                                $('#redtick').text(incorrectly_placed_skus);
+
+                                if (greentick > 0 || bluetick > 0 || redtick > 0) {
+                                    $('#tickContent').show();
+                                }
+                                $('#no_of_missing_skus').val(incorrectly_placed_skus || 0);
+                                $('#incorrectly_placed_skus').val(no_of_missing_skus || 0);
+                                console.log()
+                                var tableBody = $('#newtable');
+                                tableData.forEach(function (row, index) {
+                                    var newRow = $('<tr>');
+                                    newRow.append('<td>' + (index + 1) + '</td>');
+                                    newRow.append('<td>' + row['product_upc'] + '</td>');
+                                    newRow.append('<td>' + row['product_name'] + '</td>');
+                                    // newRow.append('<td>' + row['Distributor'] + '</td>');
+
+                                    tableBody.append(newRow);
+                                });
+                                if ($('#newtable tr').length > 0) {
+                                    $('#tablecard').show();
+                                } else {
+                                    $('#tablecard').hide(); // Hide the card if there are no rows
+                                }
+
+                                $('#my_table1').dataTable({
+                                    "pageLength": 5
+                                });
+
+                            }
+                            else {
+                                var unique_id = $('#unique_id').val();
+
+                                var formData = new FormData();
+                                formData.append('production_id', parseInt(unique_id));
+
+                                // formData.append('production_id', parseInt(5));
+                                var urls = baseurl + '/get_productioned_upc'
+                                $.ajax({
+                                    url: urls,
+                                    type: 'POST',
+                                    processData: false,
+                                    contentType: false,
+                                    data: formData,
+                                    success: function (response) {
+                                        var tableBody = $('#my_table1 tbody'); // Get table body
+                                        response.forEach(function (row, index) {
+                                            var newRow = $('<tr>');
+                                            newRow.append('<td>' + (index + 1) + '</td>');
+                                            newRow.append('<td>' + row['production_upc'] + '</td>'); // Display UPC code
+                                            newRow.append('<td>' + row['production_name'] + '</td>'); // Display production name
+
+
+                                            tableBody.append(newRow);
+                                        });
+                                        if ($('#newtable tr').length > 0) {
+                                            $('#tablecard').show();
+                                        } else {
+                                            $('#tablecard').hide();
+                                        }
+
+                                        $('#my_table1').dataTable({
+                                            "pageLength": 5
+                                        });
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.error('Error:', error);
+                                    }
+                                });
+                            }
+
+                        } else {
+                            console.log('Invalid or empty response');
+                        }
+                    },
+
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                        $('#loaderModal').hide(); // Hide the loader modal on error
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <!-- <div id="navbarPlaceholder"></div> -->
+        <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+            <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+                <a class="navbar-brand brand-logo mr-5" href="../../index.html"><img
+                        src="../../images/logo/mpulse_logo.png" class="mr-2" alt="logo" /></a>
+                <a class="navbar-brand brand-logo-mini" href="../../index.html"><img
+                        src="../../images/logo/m-favicon.png" alt="logo" /></a>
+            </div>
+            <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                    <span class="icon-menu"></span>
+                </button>
+                <ul class="navbar-nav mr-lg-2">
+                    <li class="nav-item nav-search d-none d-lg-block">
+                        <div class="input-group">
+                            <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
+                                <span class="input-group-text" id="search">
+                                    <i class="icon-search"></i>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now"
+                                aria-label="search" aria-describedby="search">
+                        </div>
+                    </li>
+                </ul>
+                <ul class="navbar-nav navbar-nav-right">
+                    <li class="nav-item dropdown">
+                        <!-- <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
+                            data-toggle="dropdown">
+                            <i class="icon-bell mx-0"></i>
+                            <span class="count"></span>
+                        </a> -->
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                            aria-labelledby="notificationDropdown">
+                            <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
+                            <a class="dropdown-item preview-item">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-success">
+                                        <i class="ti-info-alt mx-0"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-content">
+                                    <h6 class="preview-subject font-weight-normal">Application Error</h6>
+                                    <p class="font-weight-light small-text mb-0 text-muted">
+                                        Just now
+                                    </p>
+                                </div>
+                            </a>
+                            <a class="dropdown-item preview-item">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-warning">
+                                        <i class="ti-settings mx-0"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-content">
+                                    <h6 class="preview-subject font-weight-normal">Settings</h6>
+                                    <p class="font-weight-light small-text mb-0 text-muted">
+                                        Private message
+                                    </p>
+                                </div>
+                            </a>
+                            <a class="dropdown-item preview-item">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-info">
+                                        <i class="ti-user mx-0"></i>
+                                    </div>
+                                </div>
+                                <div class="preview-item-content">
+                                    <h6 class="preview-subject font-weight-normal">New user registration</h6>
+                                    <p class="font-weight-light small-text mb-0 text-muted">
+                                        2 days ago
+                                    </p>
+                                </div>
+                            </a>
+                        </div>
+                    </li>
+                    <li class="nav-item nav-profile dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+                            <img src="../../images/logo/m-favicon.png" alt="profile" />
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown"
+                            aria-labelledby="profileDropdown">
+                            <a class="dropdown-item">
+                                <i class="ti-settings text-primary"></i>
+                                Settings
+                            </a>
+                            <a class="dropdown-item" href="../../index.html">
+                                <a class="dropdown-item" href="../../index.html" id="logout-link">
+                                    <i class="ti-power-off text-primary"></i>
+                                    Logout
+                                </a>
+                                <script>
+                                    $(document).ready(function () {
+                                        $('#logout-link').on('click', function (event) {
+                                            event.preventDefault();
+                                            sessionStorage.clear();
+                                            window.location.href = $(this).attr('href');
+                                        });
+                                    });
+                                </script>
+                        </div>
+                    </li>
+                    <!-- <li class="nav-item nav-settings d-none d-lg-flex">
+                        <a class="nav-link" href="#">
+                            <i class="icon-ellipsis"></i>
+                        </a>
+                    </li> -->
+                </ul>
+                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+                    data-toggle="offcanvas">
+                    <span class="icon-menu"></span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_settings-panel.html -->
+            <!-- <div id="topbar"></div> -->
+
+
+            <!-- partial -->
+            <!-- <div id="menubar"></div> -->
+            <nav class="sidebar sidebar-offcanvas" id="sidebar">
+                <ul class="nav">
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="../../index.html">
+                            <i class="icon-grid menu-icon"></i>
+                            <span class="menu-title">Dashboard</span>
+                        </a>
+                    </li> -->
+                    <li class="nav-item" id="dashboard">
+                        <a class="nav-link" data-toggle="collapse" href="#dashboard" aria-expanded="false"
+                            aria-controls="dashboard">
+                            <i class="bi bi-cloud-arrow-up-fill menu-icon" style="font-size:large;"></i>
+                            <span class="menu-title">Dashboard</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="dashboard">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="dashboard.html">Dashboard</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="configrations">
+                        <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false"
+                            aria-controls="ui-basic">
+                            <i class="bi bi-collection menu-icon" style="font-size:large;"></i>
+                            <span class="menu-title">Configurations</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="ui-basic">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="role.html">Role</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="demography.html">Demography</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="datasource.html">Data Source</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="anotatemarker.html">Annotate Marker</a>
+                                </li>
+                                <li class="nav-item"> <a class="nav-link" href="menupermission.html">Menu Permission</a>
+                                </li>
+                                <li class="nav-item"> <a class="nav-link" href="user_credential_addpage.html">User</a>
+                                </li>
+                                <li class="nav-item"> <a class="nav-link" href="project_creation.html">Project
+                                        Creation</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="cycle_creation.html">Cycle Creation</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="upload">
+                        <a class="nav-link" data-toggle="collapse" href="#upload" aria-expanded="false"
+                            aria-controls="upload">
+                            <i class="bi bi-cloud-arrow-up-fill menu-icon" style="font-size:large;"></i>
+                            <span class="menu-title">Upload</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="upload">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="upload_page.html">Upload</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="production">
+                        <a class="nav-link" data-toggle="collapse" href="#production" aria-expanded="false"
+                            aria-controls="production">
+                            <i class="bi bi-person-workspace menu-icon" style="font-size:large;"></i>
+                            <span class="menu-title">Production</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="production">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="production_page.html">Production</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="audit">
+                        <a class="nav-link" data-toggle="collapse" href="#audit" aria-expanded="false"
+                            aria-controls="audit">
+                            <i class="icon-layout menu-icon"></i>
+                            <span class="menu-title">Audit</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="audit">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="audit_page.html">Audit</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="re_allocation">
+                        <a class="nav-link" data-toggle="collapse" href="#re_allocation" aria-expanded="false"
+                            aria-controls="re_allocation">
+                            <i class="bi bi-arrow-left-right menu-icon"></i>
+                            <span class="menu-title">Re Allocation</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="re_allocation">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="re_assign_and_allocation.html">Re
+                                        Allocation</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="specialization">
+                        <a class="nav-link" data-toggle="collapse" href="#specialization" aria-expanded="false"
+                            aria-controls="specialization">
+                            <i class="bi bi-boxes menu-icon"></i>
+                            <span class="menu-title">Specialization</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="specialization">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link"
+                                        href="catogory_selectionpage.html">Specialization</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="reports">
+                        <a class="nav-link" data-toggle="collapse" href="#reports" aria-expanded="false"
+                            aria-controls="reports">
+                            <i class="icon-layout menu-icon"></i>
+                            <span class="menu-title">Reports</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="reports">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="production_report.html">Production</a>
+                                </li>
+                                <li class="nav-item"> <a class="nav-link" href="audit_report.html">Audit</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="missing_upc_report.html">Missinng
+                                        UPC</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="hourly_report.html">Hourly</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="storewise_hourly_report.html">Storewise Hourly</a></li>
+
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="duplicate">
+                        <a class="nav-link" data-toggle="collapse" href="#duplicate" aria-expanded="false"
+                            aria-controls="duplicate">
+                            <i class="bi bi-copy menu-icon"></i>
+                            <span class="menu-title">Duplicate</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="duplicate">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="duplicate_finder.html">Duplicate
+                                        Finder</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="duplicate.html">Duplicate</a></li> 
+                                <li class="nav-item"> <a class="nav-link" href="duplicate_in_table.html">Duplicate
+                                        Table</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="active_deactive">
+                        <a class="nav-link" data-toggle="collapse" href="#active_deactive" aria-expanded="false"
+                            aria-controls="active_deactive">
+                            <i class="ibi bi-recycle menu-icon"></i>
+                            <span class="menu-title">Active Deactive</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="active_deactive">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="active_deactive.html">Active Deactive
+                                        </a></li>
+                                
+                            </ul>
+                        </div>
+                    </li>
+                    
+                </ul>
+
+            </nav>
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="card">
+                        <div id="loaderModal" class="modal">
+                            <div class="modal-content">
+                                <div class="loader"></div>
+                                <p>Loading...</p>
+                            </div>
+                        </div>
+                        <div class="record_status" style="display: none;">
+                            <h4 class="mt-5">No Record Found</h4>
+                        </div>
+                        <style>
+                            .record_status {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+
+                                text-align: center;
+                            }
+                        </style>
+                        <div class="overall_div" style="display: none;">
+                            <div class="card-header row">
+                                <div class="col-4">
+                                    <h5 class="card-title">Audit: <span id="comtext"
+                                            style="color: rgb(44, 26, 201); font-size: 20px;">
+                                            -/- </span></h5>
+                                </div>
+                                <div class="col-6">
+                                    <div class="" id="tickContent" style="display: none;">
+                                        <p>
+                                            <span style="color: rgb(16, 161, 40);"> Green Tick:</span> <span
+                                                style="color: rgb(16, 161, 40);" id="greentick">0</span>,
+                                            <span style="color: rgb(24, 0, 240);"> Blue Cross: </span><span
+                                                style="color: rgb(24, 0, 240);" id="bluetick">0</span>,
+                                            <span style="color: rgb(255, 0, 0);">Red Cross: </span> <span
+                                                style="color: rgb(255, 0, 0);" id="redtick">0</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+
+                                    <script src="../../js/url.js">
+
+                                    </script>
+                                    <script>
+                                        var dynamicpdf = "";
+                                        $(document).ready(function () {
+                                            $('#loaderModal').show(); // Show the loader modal
+
+                                            var userid = sessionStorage.getItem('id');
+                                            console.log(userid + "userid");
+                                            var url = baseurl + '/get_audit_qa';
+                                            var formData = new FormData();
+                                            formData.append('emp_id', userid);
+
+                                            $.ajax({
+                                                url: url,
+                                                type: 'POST',
+                                                processData: false,
+                                                contentType: false,
+                                                data: formData,
+                                                success: function (response) {
+                                                    $('#loaderModal').hide(); // Hide the loader modal on success
+
+                                                    if (response && response.length > 0) {
+                                                        $('.record_status').hide();
+                                                        $('.overall_div').show();
+                                                        var cycleName = response[0].cycle_name;
+                                                        var storenumber = response[0].store_number;
+                                                        var department_name = response[0].department_name;
+                                                        var planogram_type = response[0].planogram_type;
+                                                        var planogram_name = response[0].planogram_name;
+                                                        var total_no_of_sku = response[0].total_no_of_sku;
+                                                        var pdfPath = response[0].pdf_path_name[0];
+                                                        var dynamicUrl = baseurl + '/' + pdfPath;
+                                                        url = dynamicUrl;
+                                                        dynamicpdf = dynamicUrl;
+                                                        $('#cycle').val(cycleName);
+                                                        $('#storenumber').val(storenumber);
+                                                        $('#departmentname').val(department_name);
+                                                        $('#departmenttype').val(planogram_type);
+                                                        $('#planogramname').val(planogram_name);
+                                                        $('#total_no_of_skus').val(total_no_of_sku);
+                                                    } else {
+                                                        // Show the "No record Found" message
+                                                        $('.record_status').show();
+                                                        $('.overall_div').hide()
+                                                        console.log('Invalid or empty response');
+                                                    }
+                                                },
+                                                error: function (xhr, status, error) {
+                                                    console.error('Error:', error);
+                                                    $('#loaderModal').hide(); // Hide the loader modal on error
+                                                }
+                                            });
+                                        });
+                                    </script>
+
+
+                                    <!-- {% if planogrampdf or storeimg %} -->
+                                    <button class="btn btn-sm btn-warning float-end" id="opentabaudit"
+                                        onclick="opentab()">View planogram
+                                        PDF
+                                        & Image</button>
+                                    <!-- {% endif %} -->
+                                </div>
+                            </div>
+                            <!-- {% if trackingdata %} -->
+                            <div class="card-body">
+                                <!-- <form method="POST" id="prodform">
+                                {% csrf_token %} -->
+                                <style>
+                                    /* Style the loader modal */
+                                    .modal {
+                                        display: none;
+                                        /* Hide the modal by default */
+                                        position: fixed;
+                                        z-index: 999;
+                                        /* Ensure it appears on top of other elements */
+                                        left: 0;
+                                        top: 0;
+                                        width: 100%;
+                                        height: 100%;
+                                        overflow: auto;
+                                        background-color: rgba(0, 0, 0, 0.5);
+                                        /* Semi-transparent background */
+                                    }
+
+                                    /* Center the loader content */
+                                    .modal-content {
+                                        display: flex;
+                                        flex-direction: column;
+                                        align-items: center;
+                                        justify-content: center;
+                                        height: 100%;
+                                    }
+
+                                    /* Loader animation */
+                                    .loader {
+                                        border: 8px solid #f3f3f3;
+                                        border-radius: 50%;
+                                        border-top: 8px solid #3498db;
+                                        width: 50px;
+                                        height: 50px;
+                                        animation: spin 2s linear infinite;
+                                    }
+
+                                    @keyframes spin {
+                                        0% {
+                                            transform: rotate(0deg);
+                                        }
+
+                                        100% {
+                                            transform: rotate(360deg);
+                                        }
+                                    }
+                                </style>
+                                <div class="row">
+
+                                    <div class="col-md-2">
+                                        <label for="cycle">Cycle</label>
+                                        <input type="hidden" name="unique_id" id="unique_id">
+                                        <input type="text" class="form-control" name="cycle" id="cycle" value="--"
+                                            disabled>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="storenumber">Store Number</label>
+                                        <input type="hidden" value="" name="idval" id="idval">
+                                        <input type="text" class="form-control" name="storenumber" id="storenumber"
+                                            value="--" disabled>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="8digit_store_number">Store Number</label>
+                                        <input type="text" class="form-control" name="8digit_store_number"
+                                            id="8digit_store_number" value="--" disabled>
+
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="departmentname">Department Name</label>
+                                        <input type="text" class="form-control" name="departmentname"
+                                            id="departmentname" value="--" disabled>
+
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="departmenttype">Planogram Type</label>
+                                        <input type="text" class="form-control" name="departmenttype"
+                                            id="departmenttype" value="--" disabled>
+
+                                    </div>
+
+                                </div><br>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="planogramname">Planogram Name</label>
+                                        <input type="text" class="form-control" name="planogramname" id="planogramname"
+                                            value="--" disabled>
+
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="total_no_of_skus">Total No. of SKUs</label><br>
+                                        <input type="text" class="form-control" value="--" name="total_no_of_skus"
+                                            id="total_no_of_skus" disabled>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="workable_non_workable">Workable/Non-Workable</label><br>
+                                        <!-- <input type="text" class="form-control" name="workable_non_workable"
+                                id="workable_non_workable"> -->
+                                        <select name="workable_non_workable" id="workable_non_workable"
+                                            class="form-control" required>
+                                            <option value="">----Select----</option>
+                                            <option value="Workable">Workable</option>
+                                            <option value="Non Workable–PDF not available on SSO">Non Workable–PDF not
+                                                available on SSO
+                                            </option>
+                                            <option value="Non Workable–Store not found on SSO">Non Workable–Store not
+                                                found on SSO
+                                            </option>
+                                            <option
+                                                value="Non Workable–Incorrect POG tagging-(POG has more segments than site)">
+                                                Non
+                                                Workable–Incorrect POG tagging-(POG has more segments than site)
+                                            </option>
+                                            <option
+                                                value="Non Workable–Incorrect POG tagging-(Site has more segments than POG)">
+                                                Non
+                                                Workable–Incorrect POG tagging-(Site has more segments than POG)
+                                            </option>
+                                            <option value="Non Workable–Planograms shelf count/segment size differs">Non
+                                                Workable–Planograms shelf count/segment size differs</option>
+                                            <option value="Non Workable-Image not qualified for compliance">Non
+                                                Workable-Image not
+                                                qualified for compliance</option>
+                                            <option value="Non Workable - Store image/Segment image missing">Non
+                                                Workable - Store
+                                                image/Segment image missing</option>
+
+                                        </select>
+                                    </div>
+                                </div><br>
+                                <div class="row" id="first-row">
+                                </div>
+                                <br>
+                                <div class="row" id="second-row">
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="">Remarks</label>
+                                        <input type="text" class="form-control" name="Remarks" id="Remarks" required>
+                                    </div>
+                                    <div class="col-md-4 mt-4">
+                                        <button class="btn btn-primary" style="margin-top: 5px; display: none;"
+                                            id="open_pdated_pdf" onclick="openPDF()">Open
+                                            Updated PDF</button>
+                                        <!-- <div class="prod_file">
+                                        <label for="">Production File</label><br>
+                                        <input type="file" accept=".pdf" class="form-control" name="production_pdf"
+                                            id="production_pdf" required>
+                                    </div> -->
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-6 text-center">
+
+
+                                    </div>
+                                    <input type="hidden" name="key" id="key">
+                                    <div class="col-md-4 text-end">
+                                        <h5 id="available_checking_text" style="color:red;"></h5>
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <button class="btn btn-sm btn-info" id="skipdata">Skip</button>
+                                        <button class="btn btn-sm btn-success"
+                                            id="submit_missing_upc_data">Submit</button>
+                                    </div>
+                                </div>
+                                <!-- </form> -->
+                            </div>
+                        </div>
+                        <br>
+                        <div class="card" id="tablecard" style="display: none;">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered"
+                                        style="table-layout: auto; width: 100%; text-align: center;" id="my_table1">
+                                        <thead style="text-align: center;">
+                                            <tr>
+                                                <th>S.no</th>
+                                                <th>UPC</th>
+                                                <th>Product Name </th>
+                                                <!-- <th>Distributor</th> -->
+                                            </tr>
+                                        </thead>
+                                        <tbody id="newtable">
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="card-footer text-center">
+                            <p class="mt-3">No Recordes.</p>
+                        </div> -->
+
+                        <br>
+
+                        <div class="container" id="flotwindow" hidden>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <script src="../../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+        <script src="../../vendors/datatables.net/jquery.dataTables.js"></script>
+        <script src="../../js/dataTables.select.min.js"></script>
+        <!-- <link rel="stylesheet" href="../../vendors/datatables.net-bs4/dataTables.bootstrap4.css"> -->
+
+
+
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        var title = 'Production';
+        $('#HEADED').text(title)
+    </script>
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Function to load values based on URL parameters
+            function loadValuesFromURL() {
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+
+                const greentick = urlParams.get('greenCount');
+                const no_of_missing_skus = urlParams.get('blueCount');
+                const incorrectly_placed_skus = urlParams.get('redCount');
+
+                $('#greentick').text(greentick);
+                $('#bluetick').text(no_of_missing_skus);
+
+                $('#redtick').text(incorrectly_placed_skus);
+
+                if (greentick > 0 || no_of_missing_skus > 0 || incorrectly_placed_skus > 0) {
+                    $('#tickContent').show();
+                }
+
+                $('#no_of_missing_skus').val(incorrectly_placed_skus || 0);
+                $('#incorrectly_placed_skus').val(no_of_missing_skus || 0);
+            }
+            loadValuesFromURL();
+
+            $('#workable_non_workable').on('change', function () {
+                var selectedValue = $(this).val();
+                $('#first-row').empty();
+                if (selectedValue == "Non Workable - Store image/Segment image missing") {
+                    $('#first-row').empty();
+                    $('#second-row').empty();
+                    $('.prod_file').hide();
+                    $('#production_pdf').removeAttr('required');
+                } else if (selectedValue == "Workable") {
+                    $('#first-row').append("<div class='col-md-4'>" +
+                        "<label for='Image_Qualified_for_Compliance'>Image Qualified for Compliance</label><br>" +
+                        "<select name='Image_Qualified_for_Compliance' id='Image_Qualified_for_Compliance' " +
+                        "style='border: 1px solid black; color: black;' class='form-control select-form' required>" +
+                        "<option value=''>-- Select --</option>" +
+                        "<option value='Qualified'>Qualified</option>" +
+                        "<option value='Not Qualified - Image is blur/pixelated'>Not Qualified - Image is blur/pixelated</option>" +
+                        "<option value='Not Qualified - Image has glare'>Not Qualified - Image has glare</option>" +
+                        "<option value='Not Qualified - Image cut on the sides'>" +
+                        "Not Qualified - Image cut on the sides</option>" +
+                        "<option value='Not Qualified - Image has an obstruction - Image has glare'>Not Qualified - Image has an obstruction - Image has glare</option>" +
+                        "<option value='Not Qualified - Image is dark'>Not Qualified - Image is dark</option>" +
+                        "</select>" +
+                        "</div>" +
+                        "<div class='col-md-4'>" +
+                        "<label for=''>No. of Missing SKUs</label><br>" +
+                        "<input type='text' class='form-control' name='no_of_missing_skus' id='no_of_missing_skus' disabled required>" +
+                        "</div>" +
+                        "<div class='col-md-4'>" +
+                        "<label for=''>Incorrectly placed SKUs</label><br>" +
+                        "<input type='text' class='form-control' name='incorrectly_placed_skus' " +
+                        "id='incorrectly_placed_skus' disabled required>" +
+                        "</div>");
+                    $('.prod_file').show();
+                    // Load values from URL when the select input changes
+                    loadValuesFromURL();
+
+                } else {
+                    $('#first-row').append('<div class="col-md-3">' +
+                        '<label for="">Image Qualified for Compliance</label><br>' +
+                        "<select name='Image_Qualified_for_Compliance' id='Image_Qualified_for_Compliance' " +
+                        "style='border: 1px solid black; color: black;' class='form-control select-form' required>" +
+                        "<option value=''>-- Select --</option>" +
+                        "<option value='Qualified'>Qualified</option>" +
+                        "<option value='Not Qualified - Image is blur/pixelated'>Not Qualified - Image is blur/pixelated</option>" +
+                        "<option value='Not Qualified - Image has glare'>Not Qualified - Image has glare</option>" +
+                        "<option value='Not Qualified - Image cut on the sides'>" +
+                        "Not Qualified - Image cut on the sides</option>" +
+                        "<option value='Not Qualified - Image has an obstruction - Image has glare'>Not Qualified - Image has an obstruction - Image has glare</option>" +
+                        "<option value='Not Qualified - Image is dark'>Not Qualified - Image is dark</option>" +
+                        "</select></div>" +
+                        '<div class="col-md-3">' +
+                        '<label for="">No. of Bays</label><br>' +
+                        '<input type="text" class="form-control" name="No_of_Bays" id="No_of_Bays" required> ' +
+                        '</div>' +
+                        '<div class="col-md-3">' +
+                        '<label for="">No. of Shelves</label><br>' +
+                        '<input type="text" class="form-control" name="No_of_Shelves" id="No_of_Shelves" required> ' +
+                        '</div>' +
+                        '<div class="col-md-3">' +
+                        '<label for="">Size of Bays</label><br>' +
+                        '<input type="text" class="form-control" name="Size_of_Bays" id="Size_of_Bays" required>' +
+                        '</div>');
+
+                    $('.prod_file').hide();
+                    $('#production_pdf').removeAttr('required');
+                    // Load values from URL when the select input changes
+                    loadValuesFromURL();
+                }
+            });
+        });
+    </script>
+
+    <script>
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            var defaultImage = document.querySelector('.column img');
+            if (defaultImage) {
+                myFunction(defaultImage);
+            }
+        });
+
+    </script>
+    <script src="../../js/url.js"></script>
+    <script>
+        function opentab() {
+            var dynamicpdf = "";
+            $(document).ready(function () {
+                $('#loaderModal').show();
+                var userid = sessionStorage.getItem('id');
+                console.log(userid + "userid");
+                var url = baseurl + '/get_audit_qa';
+                var formData = new FormData();
+                formData.append('emp_id', userid);
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function (response) {
+                        $('#loaderModal').hide();
+                        if (response && response.length > 0) {
+
+                            var completed = response[0].completed;
+                            var total = response[0].total;
+                            $('#comtext').text(completed + '/' + total);
+                            var cycleName = response[0].cycle_name;
+                            console.log(cycleName)
+                            var skiped_count = response[0].skiped_count;
+                            var production_id = response[0].unique_id;
+                            var storenumber = response[0].store_number;
+                            var eight_digit_store_number = response[0].eight_digit_store_number;
+
+
+                            var department_name = response[0].department_name;
+                            var planogram_type = response[0].planogram_type;
+                            var planogram_name = response[0].planogram_name;
+                            var total_no_of_sku = response[0].total_no_of_sku;
+                            var pdfPath = response[0].pdf_path_name[0];
+
+
+                            var workable_status = response[0].workable_status;
+                            console.log(workable_status)
+                            var Image_Qualified_for_Compliance = response[0].Image_Qualified_for_Compliance;
+                            var No_of_Missing_SKUs = response[0].No_of_Missing_SKUs;
+                            var Incorrectly_placed_SKUs = response[0].Incorrectly_placed_SKUs;
+                            var Remarks = response[0].Remarks;
+                            var No_of_Bays = response[0].No_of_Bays;
+                            var No_of_Shelves = response[0].No_of_Shelves;
+                            var Size_of_Bays = response[0].Size_of_Bays;
+                            var green_count = response[0].green_count;
+                            var red_count = response[0].red_count;
+                            var blue_count = response[0].blue_count;
+
+
+                            var encodedPdfPath = encodeURIComponent(pdfPath);
+                            console.log(encodedPdfPath);
+                            var dynamicUrl = baseurl + '/' + encodedPdfPath;
+                            var imagePaths = response[0].image_path_name;
+                            var encodedImagePaths = imagePaths.map(path => encodeURIComponent(path));
+                            console.log(encodedImagePaths);
+                            url = dynamicUrl;
+                            dynamicpdf = dynamicUrl;
+                            $('#cycle').val(cycleName);
+                            $('#storenumber').val(storenumber);
+                            $('#8digit_store_number').val(eight_digit_store_number);
+
+                            $('#departmentname').val(department_name);
+                            $('#departmenttype').val(planogram_type);
+                            $('#planogramname').val(planogram_name);
+                            $('#total_no_of_skus').val(total_no_of_sku);
+                            var currentURL = window.location.href;
+
+                            var hostname = new URL(currentURL).hostname;
+                            console.log(hostname)
+                            var newTab = window.open('http://' + hostname + ':8000/pages/page/audit_pdf_loader.html?q=' + dynamicpdf + '&image=' + encodedImagePaths + '&production_id=' + production_id + '&eight_digit_store_number='+ eight_digit_store_number, '_blank');
+                            newTab.onload = function () {
+                                window.close();
+                            };
+                        } else {
+                            console.log('Invalid or empty response');
+                        }
+                    },
+
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                        $('#loaderModal').hide();
+                    }
+                });
+            });
+        }
+    </script>
+
+    <!-- <script>
+        $(document).ready(function () {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+
+            const greentick = urlParams.get('greenCount');
+            const no_of_missing_skus = urlParams.get('blueCount');
+            const incorrectly_placed_skus = urlParams.get('redCount');
+
+            $('#greentick').text(greentick);
+            $('#bluetick').text(no_of_missing_skus);
+            $('#redtick').text(incorrectly_placed_skus);
+
+            if (greentick > 0 || bluetick > 0 || redtick > 0) {
+                $('#tickContent').show();
+            }
+            $('#no_of_missing_skus').val(no_of_missing_skus || 0);
+            $('#incorrectly_placed_skus').val(incorrectly_placed_skus || 0);
+        });
+    </script> -->
+
+    <script>
+        function openPDF() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const qValue = urlParams.get('desiredPath');
+
+            console.log(qValue);
+
+            const withoutExtension = qValue.replace('upload_pdf', 'pdf');
+            const withoutExtension1 = withoutExtension.replace('.pdf', '');
+            var currentURL = window.location.href;
+            var eight_digit_store_number = $("#8digit_store_number").val();
+
+            var hostname = new URL(currentURL).hostname;
+
+            const newPath = 'http://' + hostname + ':8001/' + withoutExtension1 + '_' + eight_digit_store_number + '_audit.pdf';
+            console.log(newPath)
+            window.open(newPath, '_blank');
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#submit_missing_upc_data').click(function () {
+                var workableNonWorkable = document.getElementById('workable_non_workable').value;
+                var Image_Qualified_for_Compliance = "";
+                var No_of_Missing_SKUs = "";
+                var Incorrectly_placed_SKUs = "";
+                var Remarks = "";
+                var No_of_Bays = "";
+                var No_of_Shelves = "";
+                var Size_of_Bays = "";
+                if (workableNonWorkable == "Workable") {
+                    Image_Qualified_for_Compliance = document.getElementById('Image_Qualified_for_Compliance').value;
+                    No_of_Missing_SKUs = document.getElementById('no_of_missing_skus').value;
+                    Incorrectly_placed_SKUs = document.getElementById('incorrectly_placed_skus').value;
+                    Remarks = document.getElementById('Remarks').value;
+                    No_of_Bays = "";
+                    No_of_Shelves = "";
+                    Size_of_Bays = "";
+                } else if (workableNonWorkable == "Non Workable - Store image/Segment image missing") {
+                    Image_Qualified_for_Compliance = "";
+                    No_of_Missing_SKUs = "";
+                    Incorrectly_placed_SKUs = "";
+                    No_of_Bays = "";
+                    No_of_Shelves = "";
+                    Size_of_Bays = "";
+                    Remarks = document.getElementById('Remarks').value;
+                } else {
+                    Image_Qualified_for_Compliance = document.getElementById('Image_Qualified_for_Compliance').value;
+                    No_of_Missing_SKUs = "";
+                    Incorrectly_placed_SKUs = "";
+                    Remarks = document.getElementById('Remarks').value;
+                    No_of_Bays = document.getElementById('No_of_Bays').value;
+                    No_of_Shelves = document.getElementById('No_of_Shelves').value;
+                    Size_of_Bays = document.getElementById('Size_of_Bays').value;
+                }
+
+
+                var adc = []
+                var dataToSend = {}
+
+                dataToSend.workable_status = workableNonWorkable,
+                    dataToSend.Image_Qualified_for_Compliance = Image_Qualified_for_Compliance,
+                    dataToSend.No_of_Missing_SKUs = No_of_Missing_SKUs,
+                    dataToSend.Incorrectly_placed_SKUs = Incorrectly_placed_SKUs,
+                    dataToSend.Remarks = Remarks,
+                    dataToSend.No_of_Bays = No_of_Bays,
+                    dataToSend.No_of_Shelves = No_of_Shelves,
+                    dataToSend.Size_of_Bays = Size_of_Bays
+
+                adc.push(dataToSend);
+
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+
+                var formData = new FormData();
+                var unique_id = $('#unique_id').val();
+                formData.append('production_id', parseInt(unique_id));
+                formData.append('production_res', JSON.stringify(adc));
+                var urls = baseurl + '/single_audit_completed'
+                $.ajax({
+                    url: urls,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function (response) {
+                        var currentURL = window.location.href;
+
+                        var hostname = new URL(currentURL).hostname;
+                        console.log(hostname)
+                        window.location.href = 'http://' + hostname + ':8000/pages/page/audit_page.html';
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+            )
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#skipdata').click(function () {
+                var formData = new FormData();
+                var prod_id = $('#unique_id').val()
+                console.log(prod_id)
+                formData.append('production_id', parseInt(prod_id));
+                var urls = baseurl + '/production_skip'
+                $.ajax({
+                    url: urls,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function (response) {
+                        var currentURL = window.location.href;
+
+                        var hostname = new URL(currentURL).hostname;
+                        console.log(hostname)
+                        window.location.href = 'http://' + hostname + ':8000/pages/page/audit_page.html';
+                        // window.location.href = "http://localhost:8000/pages/page/production_page.html";
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+            )
+        });
+    </script>
+
+
+</body>
+
+
+</html>
