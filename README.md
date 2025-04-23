@@ -17,7 +17,8 @@
       Department Name
       Planogram Type
       Planogram Name	
-      No. of SKUs	Priroity
+      No. of SKUs	
+      Priroity
       Delivery_date
       
 # Planogram PDF Formate Name:
