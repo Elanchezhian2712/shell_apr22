@@ -93,7 +93,7 @@
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                     <span class="icon-menu"></span>
                 </button>
-                <ul class="navbar-nav mr-lg-2">
+                 <!-- <ul class="navbar-nav mr-lg-2">
                     <li class="nav-item nav-search d-none d-lg-block">
                         <div class="input-group">
                             <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
@@ -105,7 +105,7 @@
                                 aria-label="search" aria-describedby="search">
                         </div>
                     </li>
-                </ul>
+                </ul> -->
                 <ul class="navbar-nav navbar-nav-right">
                     <li class="nav-item dropdown">
                         <!-- <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
@@ -163,10 +163,10 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown"
                             aria-labelledby="profileDropdown">
-                            <a class="dropdown-item">
+                             <!-- <a class="dropdown-item">
                                 <i class="ti-settings text-primary"></i>
                                 Settings
-                            </a>
+                            </a> -->
                             <a class="dropdown-item" href="../../index.html" id="logout-link">
                                 <i class="ti-power-off text-primary"></i>
                                 Logout
@@ -508,7 +508,7 @@
 
                     // Determine the button text based on cycle_status
                     var buttonText = item['cycle_status'] === 1 ? 'Active' : 'Inactive';
-                    var buttonClass = item['cycle_status'] === 1 ? 'btn-success' : 'btn-danger';
+                    var buttonClass = item['cycle_status'] === 1 ? 'btn-primary' : 'btn-danger';
 
                     // Create button HTML with data attributes to store row data
                     rows += '<td><button class="btn ' + buttonClass + ' status-button" data-id="' + item['id'] + '" data-project-name="' + item['project_name'] + '" data-cycle-name="' + item['cycle_name'] + '" data-cycle-id="' + item['cycle_id'] + '" data-project-id="' + item['project_id_id'] + '" data-cycle-start-date="' + item['cycle_start_date'] + '" data-cycle-end-date="' + item['cycle_end_date'] + '" data-cycle-status="' + item['cycle_status'] + '">' + buttonText + '</button></td>';

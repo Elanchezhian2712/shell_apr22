@@ -91,7 +91,7 @@
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                     <span class="icon-menu"></span>
                 </button>
-                <ul class="navbar-nav mr-lg-2">
+                 <!-- <ul class="navbar-nav mr-lg-2">
                     <li class="nav-item nav-search d-none d-lg-block">
                         <div class="input-group">
                             <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
@@ -103,7 +103,7 @@
                                 aria-label="search" aria-describedby="search">
                         </div>
                     </li>
-                </ul>
+                </ul> -->
                 <ul class="navbar-nav navbar-nav-right">
                     <li class="nav-item dropdown">
                         <!-- <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
@@ -161,10 +161,10 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown"
                             aria-labelledby="profileDropdown">
-                            <a class="dropdown-item">
+                             <!-- <a class="dropdown-item">
                                 <i class="ti-settings text-primary"></i>
                                 Settings
-                            </a>
+                            </a> -->
                             <a class="dropdown-item" href="../../index.html" id="logout-link">
                                 <i class="ti-power-off text-primary"></i>
                                 Logout
@@ -222,6 +222,7 @@
                             </ul>
                         </div>
                     </li>
+
                     <li class="nav-item" id="configrations">
                         <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false"
                             aria-controls="ui-basic">
@@ -376,13 +377,15 @@
                 <div class="content-wrapper">
                     <div class="card">
                         <div class="card-body">
-                            <!-- Loader Spinner -->
+                            <h3 class="text-primary">Duplicate Finder</h3>
+                            <hr>
+                            <br>
                             <div id="loader" class="spinner-border text-primary" role="status">
                                 <span class="sr-only">Loading...</span>
                             </div>
             
                             <!-- Form Section -->
-                            <div id="message" class="mt-4">
+                            <div id="message">
                                 <div class="row">
             
                                     <!-- Select Option 1 Column -->
@@ -618,9 +621,14 @@
                 document.getElementById("message").appendChild(errorBox);
             });
     } else {
-        alert("Please select both options before submitting.");
-    }
-});
+            Swal.fire({
+                title: "Validation Error",
+                text: "Please select both options before submitting.",
+                icon: "warning",
+            });
+            return; 
+        }
+    });
 
 
 </script>

@@ -87,7 +87,7 @@
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                     <span class="icon-menu"></span>
                 </button>
-                <ul class="navbar-nav mr-lg-2">
+                 <!-- <ul class="navbar-nav mr-lg-2">
                     <li class="nav-item nav-search d-none d-lg-block">
                         <div class="input-group">
                             <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
@@ -99,7 +99,7 @@
                                 aria-label="search" aria-describedby="search">
                         </div>
                     </li>
-                </ul>
+                </ul> -->
                 <ul class="navbar-nav navbar-nav-right">
                     <li class="nav-item dropdown">
                         <!-- <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
@@ -157,10 +157,10 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown"
                             aria-labelledby="profileDropdown">
-                            <a class="dropdown-item">
+                             <!-- <a class="dropdown-item">
                                 <i class="ti-settings text-primary"></i>
                                 Settings
-                            </a>
+                            </a> -->
                             <a class="dropdown-item" href="../../index.html" id="logout-link">
                                 <i class="ti-power-off text-primary"></i>
                                 Logout
@@ -366,7 +366,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-sm-12 col-md-4">
+                                <div class="col-sm-12 col-md-4 " style="border-right: 2px solid #4B49AC; padding-right: 15px;">
                                     <h3 class="text-primary">Insert DataSource</h3>
                                     <hr>
                                     <br>
@@ -381,18 +381,12 @@
                                     <br>
                                     <div class="row">
                                         <div class="col text-center">
-                                            <button class="btn btn-success btn-md" onclick="roledata()">Submit</button>
+                                            <button class="btn btn-primary btn-md" onclick="roledata()">Submit</button>
                                         </div>
                                     </div>
                                 </div>
-                                <style>
-                                    .vl {
-                                        border-left: 3px solid green;
-                                        height: 300px;
-                                    }
-                                </style>
-                                <div class="vl"></div>
-                                <div class="col-sm-12 col-md-7">
+                              
+                                <div class="col-sm-12 col-md-8">
                                     <script src="../../vendors/js/vendor.bundle.base.js"></script>
 
                                     <div class="card">
@@ -550,6 +544,17 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
+                        text: response
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                }
+                else if (response === "Datasource type cannot be empty") {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Warning!',
                         text: response
                     }).then((result) => {
                         if (result.isConfirmed) {

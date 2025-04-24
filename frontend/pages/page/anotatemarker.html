@@ -377,7 +377,7 @@
               <hr>
               <br>
               <div class="row">
-                <div class="col-sm-12 col-md-4">
+                <div class="col-sm-12 col-md-4 " style="border-right: 2px solid #4B49AC; padding-right: 15px;">
 
 
                   <label for="">Annotate Label</label>
@@ -396,6 +396,7 @@
                   <br>
                   <label for="">Annotate Shape</label>
                   <select class="form-control" name="shape" id="shape">
+                    <option value="">--Select Shape--</option>
                     <option value="Tick">Tick</option>
                     <option value="Cross">Cross</option>
                     <option value="Rectangle">Rectangle</option>
@@ -406,11 +407,13 @@
 
                   <div class="row">
                     <div class="col text-center"> <!-- Center the content horizontally -->
-                      <button class="btn btn-success btn-md" onclick="anotatedata()">Submit</button>
+                      <button class="btn btn-primary btn-md" onclick="anotatedata()">Submit</button>
                     </div>
                   </div>
 
                 </div>
+
+              
                 <div class="col-sm-12 col-md-8">
                   <script src="../../vendors/js/vendor.bundle.base.js"></script>
                   <div class="table-responsive">
@@ -586,6 +589,16 @@
               location.reload();
             }
           });
+        }else if (response === "Please fill all required fields") {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning!',
+                text: response
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload();
+                }
+            });
         }
       },
       error: function (xhr, status, error) {

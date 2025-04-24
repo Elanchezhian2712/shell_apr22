@@ -157,10 +157,10 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown"
                             aria-labelledby="profileDropdown">
-                            <a class="dropdown-item">
+                             <!-- <a class="dropdown-item">
                                 <i class="ti-settings text-primary"></i>
                                 Settings
-                            </a>
+                            </a> -->
                             <a class="dropdown-item" href="../../index.html" id="logout-link">
                                 <i class="ti-power-off text-primary"></i>
                                 Logout
@@ -371,7 +371,7 @@
                         <div class="card-body">
 
                             <div class="row">
-                                <div class="col-sm-12 col-md-4">
+                                <div class="col-sm-12 col-md-4 " style="border-right: 2px solid #4B49AC; padding-right: 15px;">
                                     <br>
                                     <h3 class="text-primary">Cycle Creation</h3>
                                     <hr>
@@ -393,12 +393,14 @@
                                         <div class="col-md-9"></div>
                                         <div class="col-md-1">
                                             <br>
-                                            <button style="text-align: right;" class="btn btn-success btn-sm"
+                                            <button style="text-align: right;" class="btn btn-primary btn-sm"
                                                 onclick="insert_cycle_data()">Submit</button>
                                             <br>
                                         </div>
                                     </div>
                                 </div>
+                          
+
                                 <div class="col-sm-12 col-md-8">
                                     <div class="card">
                                         <div class="card-body">
@@ -625,6 +627,16 @@
         var cyclename = $('#cyclename').val();
         var startdate = $('#startdate').val();
         var enddate = $('#enddate').val();
+        
+        if (!projectname || !cyclename || !startdate || !enddate) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning',
+                text: 'Please fill all the fields!',
+            });
+            return;
+        }
+
         var url = baseurl + '/cycle_creation';
 
         var dataToSend = {

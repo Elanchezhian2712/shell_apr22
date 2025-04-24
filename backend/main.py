@@ -463,6 +463,10 @@ def audit_report_zip_file(Project_id:Annotated[int,Form()],Cycle_id:Annotated[in
 @app.post("/upc_report")
 def upc_report(Project_id:Annotated[int,Form()],Cycle_id:Annotated[int,Form()],db:Session=Depends(get_db)):
     df = crud.upc_report(db,Project_id,Cycle_id)
+    
+    if df.empty:
+        return JSONResponse(status_code=200, content={"message": "No data for download"})
+
     csv_writer = StringIO()
     df.to_csv(csv_writer, index=False)
     csv_writer.seek(0)
@@ -474,6 +478,10 @@ def upc_report(Project_id:Annotated[int,Form()],Cycle_id:Annotated[int,Form()],d
 @app.post("/audit_upc_report")
 def audit_upc_report(Project_id:Annotated[int,Form()],Cycle_id:Annotated[int,Form()],db:Session=Depends(get_db)):
     df = crud.audit_upc_report(db,Project_id,Cycle_id)
+    
+    if df.empty:
+        return JSONResponse(status_code=200, content={"message": "No data for download"})
+    
     csv_writer = StringIO()
     df.to_csv(csv_writer, index=False)
     csv_writer.seek(0)
@@ -485,6 +493,17 @@ def audit_upc_report(Project_id:Annotated[int,Form()],Cycle_id:Annotated[int,For
 @app.post("/pro_hourly_report")
 def pro_hourly_report(Project_id:Annotated[int,Form()],Cycle_id:Annotated[int,Form()],picked_date:Annotated[str,Form()],db:Session=Depends(get_db)):
     df = crud.pro_hourly_report(db,picked_date,Project_id,Cycle_id)
+    try:
+        transformed_data = df.to_dict(orient="records")
+        print(transformed_data)
+        return transformed_data
+    except:
+        return ""
+    
+    
+@app.post("/store_hourly_report")
+def store_hourly_report(Project_id:Annotated[int,Form()],Cycle_id:Annotated[int,Form()],picked_date:Annotated[str,Form()],picked_to_date:Annotated[str,Form()],db:Session=Depends(get_db)):
+    df = crud.store_hourly_report(db,picked_date,picked_to_date,Project_id,Cycle_id)
     try:
         transformed_data = df.to_dict(orient="records")
         print(transformed_data)

@@ -370,7 +370,7 @@
           <div class="card">
             <div class="card-body">
               <div class="row">
-                <div class="col-sm-12 col-md-4">
+                <div class="col-sm-12 col-md-4 " style="border-right: 2px solid #4B49AC; padding-right: 15px;">
                   <h3 class="text-primary">Insert Demography</h3>
                   <hr>
                   <br>
@@ -381,18 +381,12 @@
                   <br>
                   <div class="row">
                     <div class="col text-center">
-                      <button class="btn btn-success btn-md" onclick="demographydata()">Submit</button>
+                      <button class="btn btn-primary btn-md" onclick="demographydata()">Submit</button>
                     </div>
                   </div>
                 </div>
-                <style>
-                  .vl {
-                    border-left: 3px solid green;
-                    height: 300px;
-                  }
-                </style>
-                <div class="vl"></div>
-                <div class="col-sm-12 col-md-7">
+               
+                <div class="col-sm-12 col-md-8">
                   <script src="../../vendors/js/vendor.bundle.base.js"></script>
                   <div class="table-responsive">
                     <table class="table table-bordered" style="table-layout: auto; width: 100%; text-align: center;"
@@ -535,6 +529,17 @@
             if (result.isConfirmed) {
               location.reload();
             }
+          });
+        }
+        else if (response === "Demography name cannot be empty") {
+          Swal.fire({
+              icon: 'warning',
+              title: 'Warning!',
+              text: response
+          }).then((result) => {
+              if (result.isConfirmed) {
+                  location.reload();
+              }
           });
         }
       },

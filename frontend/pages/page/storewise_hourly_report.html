@@ -29,6 +29,8 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <!-- endinject -->
     <link rel="shortcut icon" href="../../images/logo/m-favicon.png" />
+   
+
     <script>
         $(document).ready(function () {
             // Get role_name and menu_names from sessionStorage
@@ -91,7 +93,7 @@
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                     <span class="icon-menu"></span>
                 </button>
-                <ul class="navbar-nav mr-lg-2">
+                 <!-- <ul class="navbar-nav mr-lg-2">
                     <li class="nav-item nav-search d-none d-lg-block">
                         <div class="input-group">
                             <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
@@ -103,7 +105,7 @@
                                 aria-label="search" aria-describedby="search">
                         </div>
                     </li>
-                </ul>
+                </ul> -->
                 <ul class="navbar-nav navbar-nav-right">
                     <li class="nav-item dropdown">
                         <!-- <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
@@ -161,10 +163,10 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown"
                             aria-labelledby="profileDropdown">
-                            <a class="dropdown-item">
+                             <!-- <a class="dropdown-item">
                                 <i class="ti-settings text-primary"></i>
                                 Settings
-                            </a>
+                            </a> -->
                             <a class="dropdown-item" href="../../index.html" id="logout-link">
                                 <i class="ti-power-off text-primary"></i>
                                 Logout
@@ -383,73 +385,55 @@
                             <div class="row">
                                 <div class="col-md-2">
                                     <label for="">Select Project</label>
-                                    <select class="form-control" name="selected_project" id="selected_project">
+                                    <select class="form-control" name="selected_project" id="selected_project" required>
                                         <option value="">--Select--</option>
-
                                     </select>
                                 </div>
                                 <div class="col-md-2">
-
                                     <label for="">Select Cycle</label>
-                                    <select class="form-control" name="selected_cycle" id="selected_cycle">
+                                    <select class="form-control" name="selected_cycle" id="selected_cycle" required>
                                         <option value="">--Select--</option>
-
                                     </select>
                                 </div>
-                                <!-- <div class="col-md-2">
-
-                                    <label for="">Production Or Audit</label>
-                                    <select name="prod_or_audit" id="prod_or_audit" class="form-control">
-                                        <option value="">--Select--</option>
-                                        <option value="/pro_hourly_report">Production</option>
-                                        <option value="/audit_hourly_report">Audit</option>
-                                    </select>
-                                </div> -->
                                 <div class="col-md-2">
-
                                     <label for="">From Date</label>
-                                    <input type="date" class="form-control" name="date" id="date">
+                                    <input type="date" class="form-control" name="date" id="date" required>
                                 </div>
                                 <div class="col-md-2">
-
                                     <label for="">To Date</label>
-                                    <input type="date" class="form-control" name="to_date" id="to_date">
+                                    <input type="date" class="form-control" name="to_date" id="to_date" required>
                                 </div>
                                 <div class="col-md-2 mt-4">
-
                                     <button class="btn btn-primary" onclick="hourly_data()">Get</button>
                                 </div>
-
-
+            
                                 <div class="container mt-5">
                                     <div id="table-container"></div>
                                 </div>
-
                             </div>
-
                         </div>
-
+            
                         <script src="../../vendors/js/vendor.bundle.base.js"></script>
                         <style>
                             element.style {
                                 height: auto;
                             }
-
+            
                             select[name="my_table_length"] {
                                 width: 20px;
                                 display: inline-block;
                                 height: 30px
                             }
-
+            
                             #my_table1 {
                                 font-size: 16px;
                             }
-
+            
                             #my_table1 th {
                                 font-size: 18px;
                                 text-align: center;
                             }
-
+            
                             #my_table1 td {
                                 font-size: 15px;
                                 text-align: center;
@@ -459,6 +443,7 @@
                     <br>
                 </div>
             </div>
+            <!-- content-wrapper ends -->            
         </div>
     </div>
 
@@ -554,14 +539,27 @@
         var to_date = $('#to_date').val();
 
         var prod_or_audit = $('#prod_or_audit').val();
-        console.log(prod_or_audit)
-        var url = baseurl + '/pro_store_hourly_report';
+
+
+        if (!project_name || !cycle_name || !date || !to_date) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Warning',
+                    text: 'Please fill all the fields!',
+                });
+                return;
+            }
+
+
+
+        var url = baseurl + '/store_hourly_report';
 
         var formData = new FormData();
         formData.append('Project_id', parseInt(project_name));
         formData.append('Cycle_id', parseInt(cycle_name));
         formData.append('picked_date', date);
         formData.append('picked_to_date', to_date);
+
         $.ajax({
             url: url,
             type: 'POST',
@@ -571,98 +569,89 @@
             success: function (response) {
 
                 function handleSuccess(response) {
-                    // Get all unique time slots
+                    // Collect all unique time slots (excluding user_id and overall count)
                     const timeSlots = new Set();
-                    for (const times of Object.values(response)) {
-                        for (const timeSlot of Object.keys(times)) {
-                            timeSlots.add(timeSlot);
-                        }
-                    }
+                    response.forEach(userData => {
+                        Object.keys(userData).forEach(key => {
+                            if (key !== 'user_id' && key.toLowerCase() !== 'overall count') {
+                                timeSlots.add(key);
+                            }
+                        });
+                    });
 
-                    // Convert timeSlots to an array and sort them
                     const timeSlotsArray = Array.from(timeSlots).sort();
 
-                    // Get the container to append content
                     const tableContainer = document.getElementById('table-container');
-                    tableContainer.innerHTML = ''; // Clear any existing content
+                    tableContainer.innerHTML = ''; // Clear existing content
 
-                    if (Object.keys(response).length === 0) {
-                        // If the response is empty, display "No records found"
+                    if (response.length === 0) {
                         const noRecordsMessage = document.createElement('p');
                         noRecordsMessage.textContent = 'No records found';
                         tableContainer.appendChild(noRecordsMessage);
                     } else {
-                        // Function to create an HTML table from JSON data
-                        function createTableFromJSON(response, timeSlotsArray) {
-                            // Create a table element with Bootstrap classes
-                            const table = document.createElement('table');
-                            table.className = 'table table-striped table-bordered';
+                        // Create table
+                        const table = document.createElement('table');
+                        table.className = 'table table-striped table-bordered';
 
-                            // Create the table header row
-                            const thead = document.createElement('thead');
-                            const headerRow = document.createElement('tr');
+                        // Table Header
+                        const thead = document.createElement('thead');
+                        const headerRow = document.createElement('tr');
 
-                            // Create the first header cell for dates
-                            const thDate = document.createElement('th');
-                            thDate.textContent = 'Date';
-                            headerRow.appendChild(thDate);
+                        const thUser = document.createElement('th');
+                        thUser.textContent = 'User ID';
+                        headerRow.appendChild(thUser);
 
-                            // Create headers for each time slot
+                        timeSlotsArray.forEach(timeSlot => {
+                            const th = document.createElement('th');
+                            th.textContent = timeSlot;
+                            headerRow.appendChild(th);
+                        });
+
+                        // Add "Overall Count" column
+                        const thOverall = document.createElement('th');
+                        thOverall.textContent = 'Overall Count';
+                        headerRow.appendChild(thOverall);
+
+                        thead.appendChild(headerRow);
+                        table.appendChild(thead);
+
+                        // Table Body
+                        const tbody = document.createElement('tbody');
+
+                        response.forEach(userData => {
+                            const row = document.createElement('tr');
+
+                            const userIdCell = document.createElement('td');
+                            userIdCell.textContent = userData['user_id'];
+                            row.appendChild(userIdCell);
+
                             timeSlotsArray.forEach(timeSlot => {
-                                const th = document.createElement('th');
-                                th.textContent = timeSlot;
-                                headerRow.appendChild(th);
+                                const td = document.createElement('td');
+                                td.textContent = userData[timeSlot] !== undefined ? userData[timeSlot] : '-';
+                                row.appendChild(td);
                             });
 
-                            thead.appendChild(headerRow);
-                            table.appendChild(thead);
+                            // Add overall count
+                            const tdOverall = document.createElement('td');
+                            tdOverall.textContent = userData['overall count'] !== undefined ? userData['overall count'] : '-';
+                            row.appendChild(tdOverall);
 
-                            // Create the table body
-                            const tbody = document.createElement('tbody');
+                            tbody.appendChild(row);
+                        });
 
-                            // Populate the table with data
-                            Object.entries(response).forEach(([date, times]) => {
-                                const row = document.createElement('tr');
-
-                                // Create the date cell
-                                const dateCell = document.createElement('td');
-                                dateCell.textContent = date;
-                                row.appendChild(dateCell);
-
-                                // Create cells for each time slot's value
-                                timeSlotsArray.forEach(timeSlot => {
-                                    const td = document.createElement('td');
-                                    td.textContent = times[timeSlot] !== undefined ? times[timeSlot] : '-';
-                                    row.appendChild(td);
-                                });
-
-                                tbody.appendChild(row);
-                            });
-
-                            table.appendChild(tbody);
-
-                            return table;
-                        }
-
-                        // Create and append the table to the container
-                        const table = createTableFromJSON(response, timeSlotsArray);
+                        table.appendChild(tbody);
                         tableContainer.appendChild(table);
                     }
                 }
 
-                // Sample AJAX success function call
-                handleSuccess(response); // Replace jsonArray with your actual response
-
-            },       
+                handleSuccess(response);
+            },
 
             error: function (xhr, status, error) {
                 console.error('Error updating user status:', error);
-                // Reset button text in case of error
-                button.textContent = currentText;
             }
         });
     };
-
 </script>
 
 

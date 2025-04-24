@@ -66,6 +66,10 @@ def get_shell_Menus(db: Session):
 #-------------------------------------------------------------------------------------------
 
 def insert_user_Role(db:Session,user_roles:schemas.user_Roles):
+    if not user_roles.role_name or user_roles.role_name.strip() == "":
+        # print('empty')
+        return "Role name cannot be empty"
+    
     db_count = db.query(models.user_Roles).filter(models.user_Roles.role_name == user_roles.role_name).count()
     if db_count == 0:
         db_role = models.user_Roles(role_name = user_roles.role_name)
@@ -93,6 +97,11 @@ def update_user_Role(db:Session,role_id,update_role_name):
 #-------------------------------------------------------------------------------------------
 
 def insert_Demography(db:Session,shell_Demography:schemas.shell_Demography):
+    
+    if not shell_Demography.demography_name or shell_Demography.demography_name.strip() == "":
+        # print('empty')
+        return "Demography name cannot be empty"
+    
     db_count = db.query(models.shell_Demography).filter(models.shell_Demography.demography_name == shell_Demography.demography_name).count()
     if db_count==0:
         db_role = models.shell_Demography(demography_name = shell_Demography.demography_name)
@@ -120,6 +129,11 @@ def update_Demography(db:Session,demography_id,demography_name):
 #-------------------------------------------------------------------------------------------
 
 def insert_datasource_type(db:Session,shell_DataSource:schemas.shell_DataSource):
+    
+    if not shell_DataSource.datasource_type or shell_DataSource.datasource_type.strip() == "":
+        # print('empty')
+        return "Datasource type cannot be empty"
+    
     db_count = db.query(models.shell_DataSource).filter(models.shell_DataSource.datasource_type == shell_DataSource.datasource_type).count()
     if db_count==0:
         db_datasource = models.shell_DataSource(datasource_type = shell_DataSource.datasource_type)
@@ -147,6 +161,17 @@ def update_dataSource_type(db:Session,datasource_id,datasoruce_type):
 #-------------------------------------------------------------------------------------------
 
 def insert_annotate_marker(db:Session,annotate_marker_schema : schemas.shell_annotateMarker):
+    
+    if not annotate_marker_schema.annotate_marker_shape_name or annotate_marker_schema.annotate_marker_shape_name.strip() == "":
+        return "Please fill all required fields"
+    
+    if not annotate_marker_schema.annotate_marker_shape_colour or annotate_marker_schema.annotate_marker_shape_colour.strip() == "":
+        return "Please fill all required fields"
+    
+    if not annotate_marker_schema.annotate_marker_label_name or annotate_marker_schema.annotate_marker_label_name.strip() == "":
+        return "Please fill all required fields"
+    
+    
     db_count = db.query(models.shell_AnnotateMarker).filter(models.shell_AnnotateMarker.annotate_marker_label_name == annotate_marker_schema.annotate_marker_label_name).count()
     if db_count==0:
         db_annotate_insert = models.shell_AnnotateMarker(annotate_marker_shape_name = annotate_marker_schema.annotate_marker_shape_name,annotate_marker_shape_colour = annotate_marker_schema.annotate_marker_shape_colour, annotate_marker_label_name = annotate_marker_schema.annotate_marker_label_name)
@@ -177,6 +202,9 @@ def update_annotate_marker(db:Session,annotate_marker_schema:schemas.shell_annot
 #-------------------------------------------------------------------------------------------
 
 def inser_menu_permission(db:Session,menu_permission_schema:schemas.shell_menu_permission):
+    
+    if not menu_permission_schema.menu_id:
+        return "At least one menu must be selected"
      
     db_res = db.query(models.shell_menu_permission).filter(models.shell_menu_permission.role_id==menu_permission_schema.role_id).all()
 
@@ -202,7 +230,7 @@ def inser_menu_permission(db:Session,menu_permission_schema:schemas.shell_menu_p
                     db.commit()
                     db.refresh(db_menu_permission_insert)
 
-    return "Success"
+    return "Menu permission inserted succesfully"
 
 def get_menu_permission(db:Session):
     data_menu_list =[]
@@ -656,338 +684,58 @@ def get_all_project(db:Session):
 
 #--------------------------------------------------------------------------------------------------
 
-# def get_question_answer(db:Session,emp_id:str):
-#     production_list = []
-#     db_user_spl = db.query(models.shell_User_table).filter(models.shell_User_table.emp_id==emp_id).first()
-#     # print(db_user_spl.specialization)
-#     spl = db_user_spl.specialization.split(",")
-#     # print(spl)
-#     # print("\n")
-
-#     when_clauses = [(models.shell_Tracking_Sheet.planogram_type == planogram_type, index) for index, planogram_type in enumerate(spl)]
-#     for row in when_clauses:
-#         print(row)
-#     ordering = case(*[clause for clause in when_clauses], else_=len(spl))
-
-#     print(ordering)
-
-#     db_count = db.query(models.shell_User_table).filter(models.shell_User_table.emp_id==emp_id).count()
-#     if db_count > 0 :
-#         db_res = db.query(models.shell_User_table).filter(models.shell_User_table.emp_id==emp_id).first()
-#         db_employee_id = db_res.id
-#         db_res2 = db.query(models.shell_Project_Cycle_Creation).filter(models.shell_Project_Cycle_Creation.cycle_status==1).first()
-#         db_cycle_id = db_res2.id
-#         db_project_id = db_res2.project_id
-#         print("project_id",db_project_id,"cycle_id: ",db_cycle_id)
-#         count = db.query(models.shell_Tracking_Sheet).filter(
-#             models.shell_Tracking_Sheet.project_id == int(db_project_id),
-#             models.shell_Tracking_Sheet.cycle_id==int(db_cycle_id),
-#             or_(models.shell_Tracking_Sheet.picked_status == "Picked",
-#                 models.shell_Tracking_Sheet.picked_status == "Open")
-#             ).count()
-#         if count > 0:
-#             db_res3 = db.query(models.shell_Tracking_Sheet).filter(
-#             models.shell_Tracking_Sheet.project_id == int(db_project_id),
-#             models.shell_Tracking_Sheet.cycle_id==int(db_cycle_id),
-#             or_(
-#                 and_(models.shell_Tracking_Sheet.picked_status == "Picked",models.shell_Tracking_Sheet.picked_user_id == db_employee_id),
-#                 models.shell_Tracking_Sheet.picked_status == "Open")
-#             ).order_by(
-#                 ordering,
-#                 models.shell_Tracking_Sheet.picked_status.desc(),
-#                 models.shell_Tracking_Sheet.four_digit_store_number.asc(),
-#                 models.shell_Tracking_Sheet.priority.asc(),
-#                 # models.shell_Tracking_Sheet.planogram_type
-#             ).first()
-#             try:
-#                 data = {}
-#                 data['unique_id'] = db_res3.id
-#                 data['project_id'] = db_project_id
-#                 data['project_name'] = db_res3._shell_project6.project_name
-#                 data['cycle_id'] = db_cycle_id
-#                 data['cycle_name'] = db_res3._cycle_table2.cycle_name
-#                 data['demography_id'] = db_res3._shell_project6.project_demography
-#                 data['demography_name'] = db_res3._shell_project6._demography.demography_name
-#                 data['store_number'] = db_res3.four_digit_store_number
-#                 data['eight_digit_store_number'] = db_res3.store_number
-#                 data['department_name'] = db_res3.department_name
-#                 data['planogram_type'] = db_res3.planogram_type
-#                 data['planogram_name'] = db_res3.planogram_name
-#                 data['total_no_of_sku'] = db_res3.sku
-
-#                 temp = db_res3.department_name+"/"+db_res3.planogram_type+"/"+db_res3.four_digit_store_number
-
-                
-#                 db_res4 = db.query(models.shell_Planogram).filter(models.shell_Planogram.project_id == db_project_id,models.shell_Planogram.cycle_id == db_cycle_id,models.shell_Planogram.pdf_path_name.like(f'%{db_res3.planogram_name}%')).all()
-#                 pdf_list = []
-#                 for row in db_res4:
-#                     pdf_list.append(str(row.pdf_path_name).replace("\\","/"))
-#                 data['pdf_path_name'] = pdf_list
-
-#                 # print(temp)
-#                 db_res5 = db.query(models.shell_Store_Image).filter(
-#                     models.shell_Store_Image.project_id == db_project_id,
-#                     models.shell_Store_Image.cycle_id == db_cycle_id,
-#                     models.shell_Store_Image.image_path_name.like(f'%{temp}%')
-#                 ).order_by(models.shell_Store_Image.image_path_name.asc()).all()
-#                 image_list = []
-#                 for row in db_res5:
-#                     image_list.append(str(row.image_path_name).replace("\\",'/'))
-#                 data['image_path_name'] = image_list
-
-#                 db_res6 = db.query(models.shell_Project_Selected_Annotation).filter(
-#                     models.shell_Project_Selected_Annotation.project_id == db_project_id
-#                 ).all()
-#                 data2 = {}
-#                 annotation_id = []
-#                 annotate_shape_name = []
-#                 annotate_color_name = []
-#                 annotate_label_name = []
-#                 for row in db_res6:
-#                     annotation_id.append(row._annotate_marker.annotatemarker_id)
-#                     annotate_shape_name.append(row._annotate_marker.annotate_marker_shape_name)
-#                     annotate_color_name.append(row._annotate_marker.annotate_marker_shape_colour)
-#                     annotate_label_name.append(row._annotate_marker.annotate_marker_label_name)
-                
-#                 data2['annotation_id'] = annotation_id
-#                 data2['annotate_shape_name'] = annotate_shape_name
-#                 data2['annotate_color_name'] = annotate_color_name
-#                 data2['annotate_label_name'] = annotate_label_name
-
-#                 data['annotation'] = data2
-
-#                 db_update = db.query(models.shell_Tracking_Sheet).filter(
-#                     models.shell_Tracking_Sheet.id == db_res3.id
-#                 ).first()
-#                 db_update.picked_status = "Picked"
-#                 db_update.picked_user_id = db_employee_id
-#                 db_update.open_time = datetime.now()
-#                 try:
-#                     db.commit()
-#                 except :
-#                     db.rollback()
-#                     return "Failure"
-                
-#                 total_counter = db.query(models.shell_Tracking_Sheet).filter(
-#                     models.shell_Tracking_Sheet.project_id==int(db_project_id),
-#                     models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
-#                     models.shell_Tracking_Sheet.picked_status == 'Open'
-#                 ).count()
-
-#                 # print(total_counter)
-
-#                 total_counter_today = db.query(models.shell_Tracking_Sheet).filter(
-#                     models.shell_Tracking_Sheet.project_id==int(db_project_id),
-#                     models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
-#                     models.shell_Tracking_Sheet.picked_status == 'Completed',
-#                     models.shell_Tracking_Sheet.picked_user_id == db_employee_id,
-#                     func.cast(models.shell_Tracking_Sheet.close_time,Date) == datetime.now().date()
-#                 ).count()
-
-#                 # print(total_counter_today)
-
-#                 skipped_counter = db.query(models.shell_Tracking_Sheet).filter(
-#                     models.shell_Tracking_Sheet.project_id==int(db_project_id),
-#                     models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
-#                     models.shell_Tracking_Sheet.picked_status == 'Skipped',
-#                     models.shell_Tracking_Sheet.picked_user_id == db_employee_id,
-#                     func.cast(models.shell_Tracking_Sheet.close_time,Date) == datetime.now().date()
-#                 ).count()
-
-#                 data['skiped_count'] = skipped_counter
-#                 data['completed'] = total_counter_today
-#                 data['total'] = total_counter
-                
-#                 production_list.append(data)
-
-#                 return production_list
-
-#             except:
-#                 data = {}
-
-#                 total_counter = db.query(models.shell_Tracking_Sheet).filter(
-#                         models.shell_Tracking_Sheet.project_id==int(db_project_id),
-#                         models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
-#                         models.shell_Tracking_Sheet.picked_status == 'Open'
-#                     ).count()
-
-#                 # print(total_counter)
-
-#                 total_counter_today = db.query(models.shell_Tracking_Sheet).filter(
-#                         models.shell_Tracking_Sheet.project_id==int(db_project_id),
-#                         models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
-#                         models.shell_Tracking_Sheet.picked_status == 'Completed',
-#                         models.shell_Tracking_Sheet.picked_user_id == db_employee_id,
-#                         func.cast(models.shell_Tracking_Sheet.close_time,Date) == datetime.now().date()
-#                     ).count()
-
-#                 # print(total_counter_today)
-
-#                 skipped_counter = db.query(models.shell_Tracking_Sheet).filter(
-#                         models.shell_Tracking_Sheet.project_id==int(db_project_id),
-#                         models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
-#                         models.shell_Tracking_Sheet.picked_status == 'Skipped',
-#                         models.shell_Tracking_Sheet.picked_user_id == db_employee_id,
-#                         func.cast(models.shell_Tracking_Sheet.close_time,Date) == datetime.now().date()
-#                     ).count()
-#                 data['skiped_count'] = skipped_counter
-#                 data['completed'] = total_counter_today
-#                 data['total'] = total_counter
-                    
-#                 production_list.append(data)
-#                 return production_list
-    
-    
-#     else:
-#         data = {}
-
-#         total_counter = db.query(models.shell_Tracking_Sheet).filter(
-#                 models.shell_Tracking_Sheet.project_id==int(db_project_id),
-#                 models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
-#                 models.shell_Tracking_Sheet.picked_status == 'Open'
-#             ).count()
-
-#         # print(total_counter)
-
-#         total_counter_today = db.query(models.shell_Tracking_Sheet).filter(
-#                 models.shell_Tracking_Sheet.project_id==int(db_project_id),
-#                 models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
-#                 models.shell_Tracking_Sheet.picked_status == 'Completed',
-#                 models.shell_Tracking_Sheet.picked_user_id == db_employee_id,
-#                 func.cast(models.shell_Tracking_Sheet.close_time,Date) == datetime.now().date()
-#             ).count()
-
-#         # print(total_counter_today)
-
-#         skipped_counter = db.query(models.shell_Tracking_Sheet).filter(
-#                 models.shell_Tracking_Sheet.project_id==int(db_project_id),
-#                 models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
-#                 models.shell_Tracking_Sheet.picked_status == 'Skipped',
-#                 models.shell_Tracking_Sheet.picked_user_id == db_employee_id,
-#                 func.cast(models.shell_Tracking_Sheet.close_time,Date) == datetime.now().date()
-#             ).count()
-#         data['skiped_count'] = skipped_counter
-#         data['completed'] = total_counter_today
-#         data['total'] = total_counter
-            
-#         production_list.append(data)
-#         return production_list
-
-from sqlalchemy import case, or_, and_, func, Date, exc as sa_exc # Import sqlalchemy exceptions
-from datetime import datetime
-# Assuming 'models' is correctly imported and Session is from sqlalchemy.orm
-
-def get_question_answer(db: Session, emp_id: str):
+def get_question_answer(db:Session,emp_id:str):
     production_list = []
-    # Initialize counts - they might be useful even if errors occur
-    count_data = {'skiped_count': 0, 'completed': 0, 'total': 0, 'error': None}
+    db_user_spl = db.query(models.shell_User_table).filter(models.shell_User_table.emp_id==emp_id).first()
+    # print(db_user_spl.specialization)
+    spl = db_user_spl.specialization.split(",")
+    # print(spl)
+    # print("\n")
 
-    try:
-        # --- Validate User ---
-        db_user_spl = db.query(models.shell_User_table).filter(models.shell_User_table.emp_id == emp_id).first()
-        if not db_user_spl:
-            print(f"User with emp_id {emp_id} not found.")
-            count_data['error'] = f"User with emp_id {emp_id} not found."
-            production_list.append(count_data)
-            return production_list # Return list with error info
+    when_clauses = [(models.shell_Tracking_Sheet.planogram_type == planogram_type, index) for index, planogram_type in enumerate(spl)]
+    for row in when_clauses:
+        print(row)
+    ordering = case(*[clause for clause in when_clauses], else_=len(spl))
 
-        db_employee_id = db_user_spl.id
-        spl = db_user_spl.specialization.split(",") if db_user_spl.specialization else []
+    print(ordering)
 
-        # --- Validate Active Cycle ---
-        db_res2 = db.query(models.shell_Project_Cycle_Creation).filter(models.shell_Project_Cycle_Creation.cycle_status == 1).first()
-        if not db_res2:
-            print("No active project cycle found.")
-            count_data['error'] = "No active project cycle found."
-            # Try calculating counts based on user ID if possible, even without active cycle? Depends on requirements.
-            # For now, just return the error.
-            production_list.append(count_data)
-            return production_list # Return list with error info
-
+    db_count = db.query(models.shell_User_table).filter(models.shell_User_table.emp_id==emp_id).count()
+    if db_count > 0 :
+        db_res = db.query(models.shell_User_table).filter(models.shell_User_table.emp_id==emp_id).first()
+        db_employee_id = db_res.id
+        db_res2 = db.query(models.shell_Project_Cycle_Creation).filter(models.shell_Project_Cycle_Creation.cycle_status==1).first()
         db_cycle_id = db_res2.id
         db_project_id = db_res2.project_id
-        print(f"User: {emp_id}, ProjectID: {db_project_id}, CycleID: {db_cycle_id}")
-
-        # --- Calculate Counts (Requires valid project/cycle/user) ---
-        try:
-            total_counter = db.query(models.shell_Tracking_Sheet).filter(
-                models.shell_Tracking_Sheet.project_id == int(db_project_id),
-                models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
-                models.shell_Tracking_Sheet.picked_status == 'Open'
-            ).count()
-
-            total_counter_today = db.query(models.shell_Tracking_Sheet).filter(
-                models.shell_Tracking_Sheet.project_id == int(db_project_id),
-                models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
-                models.shell_Tracking_Sheet.picked_status == 'Completed',
-                models.shell_Tracking_Sheet.picked_user_id == db_employee_id,
-                func.cast(models.shell_Tracking_Sheet.close_time, Date) == datetime.now().date()
-            ).count()
-
-            skipped_counter = db.query(models.shell_Tracking_Sheet).filter(
-                models.shell_Tracking_Sheet.project_id == int(db_project_id),
-                models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
-                models.shell_Tracking_Sheet.picked_status == 'Skipped',
-                models.shell_Tracking_Sheet.picked_user_id == db_employee_id,
-                func.cast(models.shell_Tracking_Sheet.close_time, Date) == datetime.now().date()
-            ).count()
-
-            # Update count_data dictionary
-            count_data.update({
-                'skiped_count': skipped_counter,
-                'completed': total_counter_today,
-                'total': total_counter,
-                'error': None # Reset error if counts succeed
-            })
-            print(f"Counts calculated: Skipped={skipped_counter}, Completed={total_counter_today}, Open={total_counter}")
-
-        except Exception as count_exc:
-            print(f"Error calculating counts: {count_exc}")
-            # Keep default counts (0) but record the error
-            count_data['error'] = f"Error calculating counts: {count_exc}"
-            # Decide whether to proceed or return here. Let's try proceeding to see if an item can still be found.
-
-        # --- Prepare Ordering ---
-        ordering = models.shell_Tracking_Sheet.id # Default
-        if spl:
-            when_clauses = [(models.shell_Tracking_Sheet.planogram_type == planogram_type, index) for index, planogram_type in enumerate(spl)]
-            if when_clauses:
-                 ordering = case(*when_clauses, else_=len(spl))
-
-        # --- Find Next Item ---
-        eligible_items_filter = and_(
+        print("project_id",db_project_id,"cycle_id: ",db_cycle_id)
+        count = db.query(models.shell_Tracking_Sheet).filter(
             models.shell_Tracking_Sheet.project_id == int(db_project_id),
-            models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
+            models.shell_Tracking_Sheet.cycle_id==int(db_cycle_id),
+            or_(models.shell_Tracking_Sheet.picked_status == "Picked",
+                models.shell_Tracking_Sheet.picked_status == "Open")
+            ).count()
+        if count > 0:
+            db_res3 = db.query(models.shell_Tracking_Sheet).filter(
+            models.shell_Tracking_Sheet.project_id == int(db_project_id),
+            models.shell_Tracking_Sheet.cycle_id==int(db_cycle_id),
             or_(
-                and_(models.shell_Tracking_Sheet.picked_status == "Picked", models.shell_Tracking_Sheet.picked_user_id == db_employee_id),
-                models.shell_Tracking_Sheet.picked_status == "Open"
-            )
-        )
-        db_res3 = db.query(models.shell_Tracking_Sheet).filter(
-            eligible_items_filter
-        ).order_by(
-            ordering,
-            models.shell_Tracking_Sheet.picked_status.desc(),
-            models.shell_Tracking_Sheet.four_digit_store_number.asc(),
-            models.shell_Tracking_Sheet.priority.asc(),
-        ).first()
-
-        item_data = None # To hold the successfully processed item dictionary
-
-        if db_res3:
-            print(f"Found eligible item: ID={db_res3.id}, Status={db_res3.picked_status}")
-            # --- Try Processing Found Item ---
+                and_(models.shell_Tracking_Sheet.picked_status == "Picked",models.shell_Tracking_Sheet.picked_user_id == db_employee_id),
+                models.shell_Tracking_Sheet.picked_status == "Open")
+            ).order_by(
+                ordering,
+                models.shell_Tracking_Sheet.picked_status.desc(),
+                models.shell_Tracking_Sheet.four_digit_store_number.asc(),
+                models.shell_Tracking_Sheet.priority.asc(),
+                # models.shell_Tracking_Sheet.planogram_type
+            ).first()
             try:
                 data = {}
-                # Safely access attributes, providing defaults or None
                 data['unique_id'] = db_res3.id
                 data['project_id'] = db_project_id
-                data['project_name'] = getattr(db_res3._shell_project6, 'project_name', None)
+                data['project_name'] = db_res3._shell_project6.project_name
                 data['cycle_id'] = db_cycle_id
-                data['cycle_name'] = getattr(db_res3._cycle_table2, 'cycle_name', None)
-                data['demography_id'] = getattr(db_res3._shell_project6, 'project_demography', None)
-                demography_obj = getattr(db_res3._shell_project6, '_demography', None)
-                data['demography_name'] = getattr(demography_obj, 'demography_name', None)
+                data['cycle_name'] = db_res3._cycle_table2.cycle_name
+                data['demography_id'] = db_res3._shell_project6.project_demography
+                data['demography_name'] = db_res3._shell_project6._demography.demography_name
                 data['store_number'] = db_res3.four_digit_store_number
                 data['eight_digit_store_number'] = db_res3.store_number
                 data['department_name'] = db_res3.department_name
@@ -995,142 +743,164 @@ def get_question_answer(db: Session, emp_id: str):
                 data['planogram_name'] = db_res3.planogram_name
                 data['total_no_of_sku'] = db_res3.sku
 
-                # Fetch PDFs safely
+                temp = db_res3.department_name+"/"+db_res3.planogram_type+"/"+db_res3.four_digit_store_number
+
+                
+                db_res4 = db.query(models.shell_Planogram).filter(models.shell_Planogram.project_id == db_project_id,models.shell_Planogram.cycle_id == db_cycle_id,models.shell_Planogram.pdf_path_name.like(f'%{db_res3.planogram_name}%')).all()
                 pdf_list = []
-                if db_res3.planogram_name:
-                    try:
-                        db_res4 = db.query(models.shell_Planogram).filter(
-                            models.shell_Planogram.project_id == db_project_id,
-                            models.shell_Planogram.cycle_id == db_cycle_id,
-                            models.shell_Planogram.pdf_path_name.like(f'%{db_res3.planogram_name}%')
-                        ).all()
-                        pdf_list = [str(row.pdf_path_name).replace("\\", "/") for row in db_res4]
-                    except Exception as pdf_exc:
-                        print(f"Error fetching PDFs for {db_res3.planogram_name}: {pdf_exc}")
+                for row in db_res4:
+                    pdf_list.append(str(row.pdf_path_name).replace("\\","/"))
                 data['pdf_path_name'] = pdf_list
 
-                # Fetch Images safely
+                # print(temp)
+                db_res5 = db.query(models.shell_Store_Image).filter(
+                    models.shell_Store_Image.project_id == db_project_id,
+                    models.shell_Store_Image.cycle_id == db_cycle_id,
+                    models.shell_Store_Image.image_path_name.like(f'%{temp}%')
+                ).order_by(models.shell_Store_Image.image_path_name.asc()).all()
                 image_list = []
-                if all([db_res3.department_name, db_res3.planogram_type, db_res3.four_digit_store_number]):
-                    temp_path_part = f"{db_res3.department_name}/{db_res3.planogram_type}/{db_res3.four_digit_store_number}"
-                    try:
-                        db_res5 = db.query(models.shell_Store_Image).filter(
-                            models.shell_Store_Image.project_id == db_project_id,
-                            models.shell_Store_Image.cycle_id == db_cycle_id,
-                            models.shell_Store_Image.image_path_name.like(f'%{temp_path_part}%')
-                        ).order_by(models.shell_Store_Image.image_path_name.asc()).all()
-                        image_list = [str(row.image_path_name).replace("\\", '/') for row in db_res5]
-                    except Exception as img_exc:
-                         print(f"Error fetching images for {temp_path_part}: {img_exc}")
+                for row in db_res5:
+                    image_list.append(str(row.image_path_name).replace("\\",'/'))
                 data['image_path_name'] = image_list
 
-                # Fetch Annotations safely
-                data2 = {'annotation_id': [], 'annotate_shape_name': [], 'annotate_color_name': [], 'annotate_label_name': []}
-                try:
-                    db_res6 = db.query(models.shell_Project_Selected_Annotation).filter(
-                        models.shell_Project_Selected_Annotation.project_id == db_project_id
-                    ).all()
-                    for row in db_res6:
-                        marker = getattr(row, '_annotate_marker', None)
-                        if marker:
-                            data2['annotation_id'].append(getattr(marker, 'annotatemarker_id', None))
-                            data2['annotate_shape_name'].append(getattr(marker, 'annotate_marker_shape_name', None))
-                            data2['annotate_color_name'].append(getattr(marker, 'annotate_marker_shape_colour', None))
-                            data2['annotate_label_name'].append(getattr(marker, 'annotate_marker_label_name', None))
-                except Exception as anno_exc:
-                    print(f"Error fetching annotations for project {db_project_id}: {anno_exc}")
+                db_res6 = db.query(models.shell_Project_Selected_Annotation).filter(
+                    models.shell_Project_Selected_Annotation.project_id == db_project_id
+                ).all()
+                data2 = {}
+                annotation_id = []
+                annotate_shape_name = []
+                annotate_color_name = []
+                annotate_label_name = []
+                for row in db_res6:
+                    annotation_id.append(row._annotate_marker.annotatemarker_id)
+                    annotate_shape_name.append(row._annotate_marker.annotate_marker_shape_name)
+                    annotate_color_name.append(row._annotate_marker.annotate_marker_shape_colour)
+                    annotate_label_name.append(row._annotate_marker.annotate_marker_label_name)
+                
+                data2['annotation_id'] = annotation_id
+                data2['annotate_shape_name'] = annotate_shape_name
+                data2['annotate_color_name'] = annotate_color_name
+                data2['annotate_label_name'] = annotate_label_name
+
                 data['annotation'] = data2
 
-                # Add final counts to item data
-                data.update(count_data)
-                item_data = data # Mark item data as successfully prepared
+                db_update = db.query(models.shell_Tracking_Sheet).filter(
+                    models.shell_Tracking_Sheet.id == db_res3.id
+                ).first()
+                db_update.picked_status = "Picked"
+                db_update.picked_user_id = db_employee_id
+                db_update.open_time = datetime.now()
+                try:
+                    db.commit()
+                except :
+                    db.rollback()
+                    return "Failure"
+                
+                total_counter = db.query(models.shell_Tracking_Sheet).filter(
+                    models.shell_Tracking_Sheet.project_id==int(db_project_id),
+                    models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
+                    models.shell_Tracking_Sheet.picked_status == 'Open'
+                ).count()
 
-                # --- Try Updating Status ---
-                if db_res3.picked_status == "Open":
-                    try:
-                        # Re-fetch just before update for safety against stale data
-                        db_update = db.query(models.shell_Tracking_Sheet).filter(
-                            models.shell_Tracking_Sheet.id == db_res3.id
-                        ).with_for_update().first() # Lock the row if DB supports it
+                # print(total_counter)
 
-                        if db_update and db_update.picked_status == "Open":
-                            db_update.picked_status = "Picked"
-                            db_update.picked_user_id = db_employee_id
-                            db_update.open_time = datetime.now()
-                            db.commit()
-                            print(f"Successfully committed status update for item {db_res3.id}")
-                            # Recalculate 'Open' count *after* successful commit
-                            item_data['total'] = db.query(models.shell_Tracking_Sheet).filter(
-                                models.shell_Tracking_Sheet.project_id == int(db_project_id),
-                                models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
-                                models.shell_Tracking_Sheet.picked_status == 'Open'
-                            ).count()
-                        else:
-                             print(f"Item {db_res3.id} status changed or item disappeared before update commit.")
-                             # Item wasn't updated, but proceed returning the data fetched
-                             db.rollback() # Rollback potential lock acquisition
+                total_counter_today = db.query(models.shell_Tracking_Sheet).filter(
+                    models.shell_Tracking_Sheet.project_id==int(db_project_id),
+                    models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
+                    models.shell_Tracking_Sheet.picked_status == 'Completed',
+                    models.shell_Tracking_Sheet.picked_user_id == db_employee_id,
+                    func.cast(models.shell_Tracking_Sheet.close_time,Date) == datetime.now().date()
+                ).count()
 
-                    except sa_exc.SQLAlchemyError as commit_exc: # Catch specific DB errors
-                        db.rollback()
-                        print(f"Database error during status update commit for item {db_res3.id}: {commit_exc}")
-                        # Failed to update, append counts + error instead of item data
-                        count_data['error'] = f"DB error committing status update: {commit_exc}"
-                        item_data = None # Discard processed item data
-                    except Exception as general_commit_exc: # Catch other potential errors
-                        db.rollback()
-                        print(f"General error during status update commit for item {db_res3.id}: {general_commit_exc}")
-                        count_data['error'] = f"Error committing status update: {general_commit_exc}"
-                        item_data = None # Discard processed item data
-                else:
-                    # Status was already "Picked" (presumably by the same user based on filter), no update needed
-                    print(f"Item {db_res3.id} was already Picked by user, no status update needed.")
+                # print(total_counter_today)
 
-            except Exception as processing_exc:
-                db.rollback() # Rollback any transaction state if processing failed
-                print(f"Error processing item details for {db_res3.id}: {processing_exc}")
-                count_data['error'] = f"Error processing item details: {processing_exc}"
-                item_data = None # Discard partially processed item data
+                skipped_counter = db.query(models.shell_Tracking_Sheet).filter(
+                    models.shell_Tracking_Sheet.project_id==int(db_project_id),
+                    models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
+                    models.shell_Tracking_Sheet.picked_status == 'Skipped',
+                    models.shell_Tracking_Sheet.picked_user_id == db_employee_id,
+                    func.cast(models.shell_Tracking_Sheet.close_time,Date) == datetime.now().date()
+                ).count()
 
-        else:
-            # --- No eligible item found ---
-            print(f"No eligible items found for user {emp_id}.")
-            # No item data to process, will just use count_data
+                data['skiped_count'] = skipped_counter
+                data['completed'] = total_counter_today
+                data['total'] = total_counter
+                
+                production_list.append(data)
 
-        # --- Decide what to append ---
-        if item_data is not None:
-            # Successfully processed item data (and status update if applicable)
-            production_list.append(item_data)
-        else:
-            # No item found, or error occurred during processing/commit
-            # Append the count_data (which might contain an error message)
-            production_list.append(count_data)
+                return production_list
 
+            except:
+                data = {}
 
-    except Exception as outer_exc:
-        # Catch-all for any unexpected errors in the main flow
-        print(f"FATAL error in get_question_answer for emp_id {emp_id}: {outer_exc}")
-        try:
-            db.rollback() # Attempt rollback
-        except:
-            print("Rollback failed during fatal error handling.")
-        # Ensure count_data reflects the fatal error
-        count_data['error'] = f"Fatal error in API: {outer_exc}"
-        # Clear list and append only the error object
-        production_list = [count_data] # Return list with only error info
+                total_counter = db.query(models.shell_Tracking_Sheet).filter(
+                        models.shell_Tracking_Sheet.project_id==int(db_project_id),
+                        models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
+                        models.shell_Tracking_Sheet.picked_status == 'Open'
+                    ).count()
 
-    # --- Final Return ---
-    # Ensure it's always a list, even if empty (though logic above should always append at least counts)
-    if not isinstance(production_list, list):
-         print("CRITICAL: production_list is not a list before return! Forcing list.")
-         # This case should ideally never happen with the logic above
-         if production_list is None:
-             return [count_data] # Return counts with potential error message
-         else:
-             return [production_list] # Wrap whatever it is in a list (last resort)
+                # print(total_counter)
 
-    print(f"get_question_answer returning (type: {type(production_list)}): {production_list}")
-    return production_list
+                total_counter_today = db.query(models.shell_Tracking_Sheet).filter(
+                        models.shell_Tracking_Sheet.project_id==int(db_project_id),
+                        models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
+                        models.shell_Tracking_Sheet.picked_status == 'Completed',
+                        models.shell_Tracking_Sheet.picked_user_id == db_employee_id,
+                        func.cast(models.shell_Tracking_Sheet.close_time,Date) == datetime.now().date()
+                    ).count()
+
+                # print(total_counter_today)
+
+                skipped_counter = db.query(models.shell_Tracking_Sheet).filter(
+                        models.shell_Tracking_Sheet.project_id==int(db_project_id),
+                        models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
+                        models.shell_Tracking_Sheet.picked_status == 'Skipped',
+                        models.shell_Tracking_Sheet.picked_user_id == db_employee_id,
+                        func.cast(models.shell_Tracking_Sheet.close_time,Date) == datetime.now().date()
+                    ).count()
+                data['skiped_count'] = skipped_counter
+                data['completed'] = total_counter_today
+                data['total'] = total_counter
+                    
+                production_list.append(data)
+                return production_list
     
+    
+    else:
+        data = {}
+
+        total_counter = db.query(models.shell_Tracking_Sheet).filter(
+                models.shell_Tracking_Sheet.project_id==int(db_project_id),
+                models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
+                models.shell_Tracking_Sheet.picked_status == 'Open'
+            ).count()
+
+        # print(total_counter)
+
+        total_counter_today = db.query(models.shell_Tracking_Sheet).filter(
+                models.shell_Tracking_Sheet.project_id==int(db_project_id),
+                models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
+                models.shell_Tracking_Sheet.picked_status == 'Completed',
+                models.shell_Tracking_Sheet.picked_user_id == db_employee_id,
+                func.cast(models.shell_Tracking_Sheet.close_time,Date) == datetime.now().date()
+            ).count()
+
+        # print(total_counter_today)
+
+        skipped_counter = db.query(models.shell_Tracking_Sheet).filter(
+                models.shell_Tracking_Sheet.project_id==int(db_project_id),
+                models.shell_Tracking_Sheet.cycle_id == int(db_cycle_id),
+                models.shell_Tracking_Sheet.picked_status == 'Skipped',
+                models.shell_Tracking_Sheet.picked_user_id == db_employee_id,
+                func.cast(models.shell_Tracking_Sheet.close_time,Date) == datetime.now().date()
+            ).count()
+        data['skiped_count'] = skipped_counter
+        data['completed'] = total_counter_today
+        data['total'] = total_counter
+            
+        production_list.append(data)
+        return production_list
+
 #--------------------------------------------------------------------------------------------------
 
 def add_markers_to_pdf(db:Session,input_path, output_path, marker_positions, html_width, html_height, pdf_width, pdf_height, area_x, area_y, area_width, area_height,production_id):
@@ -1657,41 +1427,43 @@ def production_report(db:Session,Project_id:int,Cycle_id:int,from_date:str,to_da
 #     response.headers["Content-Disposition"] = f"attachment; filename="+zip_name
 #     return response
 # Utility to clean filenames
+
+
+import glob
+
 def production_report_zip_file(db: Session, Project_id: int, Cycle_id: int, from_date: str, to_date: str):
-    res = db.query(models.shell_Tracking_Sheet).filter(
+    from_date_obj = datetime.strptime(from_date, "%Y-%m-%d").date()
+    to_date_obj = datetime.strptime(to_date, "%Y-%m-%d").date()
+
+    records = db.query(models.shell_Tracking_Sheet).filter(
         models.shell_Tracking_Sheet.project_id == Project_id,
         models.shell_Tracking_Sheet.cycle_id == Cycle_id,
         models.shell_Tracking_Sheet.picked_status == "Completed",
         models.shell_Tracking_Sheet.audit_status == "Open",
-        func.DATE(models.shell_Tracking_Sheet.close_time) >= datetime.strptime(from_date, "%Y-%m-%d").date(),
-        func.DATE(models.shell_Tracking_Sheet.close_time) <= datetime.strptime(to_date, "%Y-%m-%d").date()
+        func.DATE(models.shell_Tracking_Sheet.close_time) >= from_date_obj,
+        func.DATE(models.shell_Tracking_Sheet.close_time) <= to_date_obj
     ).order_by(models.shell_Tracking_Sheet.id.asc()).all()
 
-    print(f"Total records found: {len(res)}")
-
-    s = io.BytesIO()
+    print(f"Total records found: {len(records)}")
+    zip_buffer = io.BytesIO()
     zip_name = f"production_{from_date}_{to_date}.zip"
 
-    with zipfile.ZipFile(s, "w") as zipf:
-        for row in res:
+    with zipfile.ZipFile(zip_buffer, "w") as zipf:
+        for row in records:
             file_name = f"{row.planogram_name}_{row.store_number}_output.pdf"
-            dir_path = os.path.join("upload_pdf", str(row.cycle_id), "PDFs")  # 🛠 FIXED HERE
-            file_path = os.path.join(dir_path, file_name)
+            base_dir = os.path.join("upload_pdf", str(row.cycle_id), "Planogram Name")
 
-            print("Checking:", file_path)
+            # Recursively find matching file in subfolders
+            matching_files = glob.glob(os.path.join(base_dir, "**", file_name), recursive=True)
 
-            if os.path.isdir(dir_path):
-                print("Files in folder:", os.listdir(dir_path))
-
-            if os.path.isfile(file_path):
-                arcname = os.path.join(zip_name, file_name)
-                zipf.write(file_path, arcname)
-                print("✅ Added:", file_path)
+            if matching_files:
+                zipf.write(matching_files[0], os.path.join(zip_name, os.path.basename(file_name)))
+                print("✅ Added:", matching_files[0])
             else:
-                print("❌ Missing file:", file_path)
+                print("❌ Missing file:", file_name)
 
-    s.seek(0)
-    response = StreamingResponse(s, media_type="application/x-zip-compressed")
+    zip_buffer.seek(0)
+    response = StreamingResponse(zip_buffer, media_type="application/x-zip-compressed")
     response.headers["Content-Disposition"] = f"attachment; filename={zip_name}"
     return response
 
@@ -1721,7 +1493,6 @@ def production_report_zip_file(db: Session, Project_id: int, Cycle_id: int, from
 #     response.headers["Content-Disposition"] = f"attachment; filename="+zip_name
 #     return response
 
-
 def audit_report_zip_file(db: Session, Project_id: int, Cycle_id: int, from_date: str, to_date: str):
     res = db.query(models.shell_Tracking_Sheet).filter(
         models.shell_Tracking_Sheet.project_id == Project_id,
@@ -1740,25 +1511,28 @@ def audit_report_zip_file(db: Session, Project_id: int, Cycle_id: int, from_date
     with zipfile.ZipFile(s, "w") as zipf:
         for row in res:
             file_name = f"{row.planogram_name}_{row.store_number}_audit.pdf"
-            dir_path = os.path.join("upload_pdf", str(row.cycle_id), "PDFs")  # 🔧 FIXED HERE
-            file_path = os.path.join(dir_path, file_name)
+            # Specify the main folder path
+            dir_path = os.path.join("upload_pdf", str(row.cycle_id), "Planogram Name")
+            # Recursively search all subdirectories using '**'
+            search_pattern = os.path.join(dir_path, '**', file_name)  # '**' matches all levels of subdirectories
 
-            print("Checking:", file_path)
-            if os.path.isdir(dir_path):
-                print("Files in folder:", os.listdir(dir_path))
+            print("Searching for:", search_pattern)
+            
+            # Use glob to find the file in all subdirectories recursively
+            files_found = glob.glob(search_pattern, recursive=True)
 
-            if os.path.isfile(file_path):
+            if files_found:
+                file_path = files_found[0]  # Use the first matched file
                 arcname = os.path.join(zip_name, file_name)
                 zipf.write(file_path, arcname)
                 print("✅ Added:", file_path)
             else:
-                print("❌ Missing file:", file_path)
+                print("❌ Missing file:", file_name)
 
     s.seek(0)
     response = StreamingResponse(s, media_type="application/x-zip-compressed")
     response.headers["Content-Disposition"] = f"attachment; filename={zip_name}"
     return response
-
 
 def audit_report(db:Session,Project_id:int,Cycle_id:int,from_date:str,to_date:str):
     query = db.query(models.shell_Project_Creation_table.project_name,models.shell_Project_Cycle_Creation.cycle_name,models.shell_Tracking_Sheet,models.shell_User_table.emp_id).filter(
@@ -1920,6 +1694,83 @@ def pro_hourly_report(db:Session,dater:str,project_id:int,cycle_id:int):
         return ""
 
 
+
+
+def store_hourly_report(db:Session,dater:str,to_dater:str,project_id:int,cycle_id:int):
+    hourly_list = []
+    all_possible_time_slot = []
+    
+    start_date = datetime.strptime(dater, "%Y-%m-%d").date()
+    end_date = datetime.strptime(to_dater, "%Y-%m-%d").date()
+    
+    count = db.query(models.shell_Tracking_Sheet).filter(
+        models.shell_Tracking_Sheet.project_id == project_id,
+        models.shell_Tracking_Sheet.cycle_id == cycle_id,
+        models.shell_Tracking_Sheet.picked_status == "Completed",
+       func.DATE(models.shell_Tracking_Sheet.close_time).between(start_date, end_date)
+    ).distinct(models.shell_Tracking_Sheet.picked_user_id).count()
+    if count >0:
+        db_res_dis = db.query(models.shell_Tracking_Sheet).filter(
+            models.shell_Tracking_Sheet.project_id == project_id,
+            models.shell_Tracking_Sheet.cycle_id == cycle_id,
+            models.shell_Tracking_Sheet.picked_status == "Completed",
+           func.DATE(models.shell_Tracking_Sheet.close_time).between(start_date, end_date)
+        ).distinct(models.shell_Tracking_Sheet.picked_user_id).all()
+        for row_user_id in db_res_dis:
+            data = {}
+            db_get_emp_id = db.query(models.shell_User_table).filter(models.shell_User_table.id==row_user_id.picked_user_id).first()
+            data['user_id'] = db_get_emp_id.emp_id
+            db_res = db.query(models.shell_Tracking_Sheet).filter(
+                models.shell_Tracking_Sheet.project_id == project_id,
+                models.shell_Tracking_Sheet.cycle_id == cycle_id,
+                models.shell_Tracking_Sheet.picked_user_id == row_user_id.picked_user_id,
+                models.shell_Tracking_Sheet.picked_status == "Completed",
+               func.DATE(models.shell_Tracking_Sheet.close_time).between(start_date, end_date)
+            ).all()
+            time_list = []
+            finished_list = []
+            for row in db_res:
+                adjusted_date = row.close_time + timedelta(hours=5,minutes=30)
+                end_hour  = adjusted_date.hour
+                start_hour = adjusted_date.hour - 1
+                temp = str(start_hour)+'-'+str(end_hour)
+                time_list.append(temp)
+                all_possible_time_slot.append(temp)
+            slot_counts = Counter(time_list)
+            for slot, count in slot_counts.items():
+                finished_list.append(count)
+            distinct_time_slots = []
+            [distinct_time_slots.append(slot) for slot in time_list if slot not in distinct_time_slots]
+            data['time_slot'] = distinct_time_slots
+            data['finished_list'] = finished_list
+            hourly_list.append(data)
+
+        distinct_time_slots = set(all_possible_time_slot)
+        all_time_slots = list(distinct_time_slots)
+        df = pd.DataFrame(hourly_list)
+        df["time_slot"] = df["time_slot"].apply(lambda x: x + list(set(all_time_slots) - set(x)))
+        def get_finished_list(row, slot):
+            index = row["time_slot"].index(slot) if slot in row["time_slot"] else None
+            return row["finished_list"][index] if index is not None and index < len(row["finished_list"]) else 0
+        for slot in all_time_slots:
+            df[slot] = df.apply(lambda row: get_finished_list(row, slot), axis=1)
+        df.drop(columns=["time_slot", "finished_list"], inplace=True)
+        df.sort_values(by="user_id", inplace=True)
+        transformed_data = df.to_dict(orient="records")
+        df1 = pd.DataFrame(transformed_data)
+        df1.set_index("user_id", inplace=True)
+        df1.reset_index(inplace=True)
+        sorted_columns = sorted(df1.columns[1:])
+        df1 = df1.reindex(columns=['user_id'] + sorted_columns)
+        df1["overall count"] = df1.iloc[:, 1:].sum(axis=1)
+        print(df1)
+        return df1
+    
+    else:
+        return ""
+    
+    
+    
 def audit_hourly_report(db:Session,dater:str,project_id:int,cycle_id:int):
     hourly_list = []
     all_possible_time_slot = []
